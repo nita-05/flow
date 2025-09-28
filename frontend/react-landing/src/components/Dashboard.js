@@ -98,8 +98,8 @@ const Dashboard = () => {
       }
 
       // Load film styles and durations
-      setFilmStyles(storyService.getFilmStylesStatic());
-      setFilmDurations(storyService.getFilmDurationsStatic());
+      // setFilmStyles(storyService.getFilmStylesStatic());
+      // setFilmDurations(storyService.getFilmDurationsStatic());
     } catch (error) {
       console.error('Failed to load user data:', error);
     }
