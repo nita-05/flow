@@ -330,5 +330,4 @@ class FileService {
   }
 }
 
-const fileService = new FileService();
-export default fileService;
+export default new FileService();

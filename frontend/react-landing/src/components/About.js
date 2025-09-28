@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const About = () => {
-  const [, setHoveredCard] = useState(null);
+  const [hoveredCard, setHoveredCard] = useState(null);
 
   const features = [
     {

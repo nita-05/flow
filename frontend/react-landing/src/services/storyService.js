@@ -550,5 +550,4 @@ class StoryService {
   }
 }
 
-const storyService = new StoryService();
-export default storyService;
+export default new StoryService();

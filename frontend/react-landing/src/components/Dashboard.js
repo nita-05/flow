@@ -15,11 +15,11 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('upload');
   const [stories, setStories] = useState([]);
   const [files, setFiles] = useState([]);
-  const [, setIsCreatingStory] = useState(false);
+  const [isCreatingStory, setIsCreatingStory] = useState(false);
   const [isGeneratingFilm, setIsGeneratingFilm] = useState(false);
-  const [, setGeneratedFilm] = useState(null);
-  const [, setFilmStyles] = useState([]);
-  const [, setFilmDurations] = useState([]);
+  const [generatedFilm, setGeneratedFilm] = useState(null);
+  const [filmStyles, setFilmStyles] = useState([]);
+  const [filmDurations, setFilmDurations] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
