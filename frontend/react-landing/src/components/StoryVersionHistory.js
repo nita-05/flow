@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import storyService from '../services/storyService';
 
 const StoryVersionHistory = ({ story, onRestore, onClose }) => {
@@ -9,9 +9,9 @@ const StoryVersionHistory = ({ story, onRestore, onClose }) => {
 
   useEffect(() => {
     loadVersions();
-  }, [story._id, loadVersions]);
+  }, [story._id]);
 
-  const loadVersions = async () => {
+  const loadVersions = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await storyService.getStoryVersions(story._id);
@@ -25,7 +25,7 @@ const StoryVersionHistory = ({ story, onRestore, onClose }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [story._id]);
 
   const handleRestoreVersion = async (version) => {
     if (version.version === story.version) {

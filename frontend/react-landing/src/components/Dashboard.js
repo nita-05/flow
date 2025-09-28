@@ -155,7 +155,7 @@ const Dashboard = () => {
     setSearchResults(results);
   };
 
-  const _generateStory = async () => {
+  const generateStory = async () => {
     if (searchResults.length === 0) {
       alert('Please search for memories first to generate a story!');
       return;
@@ -231,7 +231,7 @@ const Dashboard = () => {
     setEditingStory(story);
   };
 
-  const _handleEditFile = (file) => {
+  const handleEditFile = (file) => {
     setEditingFile(file);
   };
 

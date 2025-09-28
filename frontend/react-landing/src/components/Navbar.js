@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 const Navbar = ({ onGetStarted }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const [scrolled, setScrolled] = useState(false);
+  const [, setScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
