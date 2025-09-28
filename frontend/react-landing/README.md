@@ -179,3 +179,4 @@ This project is created for the "Best of Us" platform and follows the design aes
 
 **Built with ❤️ using React + Tailwind CSS**
 "# Environment variables updated" 
+"# Updated API URL"  
