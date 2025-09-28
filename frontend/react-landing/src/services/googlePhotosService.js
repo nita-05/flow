@@ -10,36 +10,36 @@
 
 // Use environment variables or fallback to a working approach
 // const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY || '';
-const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || '724469503053-hdt6qkhvj8ussdvfgaqq7qj5374l279j.apps.googleusercontent.com';
+// const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || '724469503053-hdt6qkhvj8ussdvfgaqq7qj5374l279j.apps.googleusercontent.com';
 
 // Request the minimum scope to avoid Google verification for production.
 // For local testing, keeping only Photos Library read-only usually suffices.
-const SCOPES = [
-  'https://www.googleapis.com/auth/photoslibrary.readonly',
-  'https://www.googleapis.com/auth/photoslibrary.readonly.appcreateddata'
-].join(' ');
+// const SCOPES = [
+//   'https://www.googleapis.com/auth/photoslibrary.readonly',
+//   'https://www.googleapis.com/auth/photoslibrary.readonly.appcreateddata'
+// ].join(' ');
 
-let gapiLoaded = false;
-let pickerLoaded = false;
-let gisLoaded = false;
+// let gapiLoaded = false;
+// let pickerLoaded = false;
+// let gisLoaded = false;
 
-function injectScript(src) {
-  return new Promise((resolve, reject) => {
-    const existing = document.querySelector(`script[src="${src}"]`);
-    if (existing) {
-      existing.addEventListener('load', () => resolve());
-      resolve();
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = src;
-    script.async = true;
-    script.defer = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
-    document.body.appendChild(script);
-  });
-}
+// function injectScript(src) {
+//   return new Promise((resolve, reject) => {
+//     const existing = document.querySelector(`script[src="${src}"]`);
+//     if (existing) {
+//       existing.addEventListener('load', () => resolve());
+//       resolve();
+//       return;
+//     }
+//     const script = document.createElement('script');
+//     script.src = src;
+//     script.async = true;
+//     script.defer = true;
+//     script.onload = () => resolve();
+//     script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+//     document.body.appendChild(script);
+//   });
+// }
 
 // async function loadGapi() {
 //   if (gapiLoaded) return;

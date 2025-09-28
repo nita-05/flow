@@ -9,7 +9,7 @@ const StoryVersionHistory = ({ story, onRestore, onClose }) => {
 
   useEffect(() => {
     loadVersions();
-  }, [story._id]);
+  }, [story._id, loadVersions]);
 
   const loadVersions = async () => {
     setIsLoading(true);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const Description = () => {
-  const [currentWord, setCurrentWord] = useState(0);
+  const [, setCurrentWord] = useState(0);
 
   const words = ["Memories", "Stories", "Moments", "Experiences", "Journeys"];
   const fullText = "At Footage Flow, we're building Humanity's Video Search Engine. Our AI-powered platform processes your entire phone gallery, transcribes speech, analyzes visual content, and creates beautiful stories that celebrate your life's best moments. Transform scattered memories into cohesive narratives that inspire and connect.";
