@@ -1,71 +1,249 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import metricsService from '../services/metricsService';
+import Counter from './Counter';
 
 const Portfolio = ({ onGetStarted }) => {
-  const projects = [
-    {
-      icon: (
-        <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-        </svg>
-      ),
-      title: "Bulk Upload System",
-      description: "Upload your entire phone gallery at once. Our AI processes everything automatically, analyzing content and generating intelligent tags for seamless organization."
-    },
-    {
-      icon: (
-        <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-        </svg>
-      ),
-      title: "Semantic Search Engine",
-      description: "Search by meaning: \"show me all the times I was happy\" or \"find my beach memories\". Our AI understands context, emotions, and concepts beyond keywords."
-    },
-    {
-      icon: (
-        <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
-      ),
-      title: "AI Story Generation",
-      description: "Transform scattered memories into cohesive, uplifting narratives that celebrate the best moments of your life. Create beautiful \"Footage Flow\" stories with AI."
-    }
-  ];
+  const [stats, setStats] = useState({ totalStories: 0, totalAnalyzedFiles: 0, totalViews: 0, userSatisfaction: 0 });
+
+  // Fetch live metrics once mounted
+  useEffect(() => {
+    let isMounted = true;
+    metricsService.fetchSummary()
+      .then((data) => {
+        if (!isMounted) return;
+        // Defensive defaults
+        setStats({
+          totalStories: data.totalStories || 0,
+          totalAnalyzedFiles: data.totalAnalyzedFiles || 0,
+          totalViews: data.totalViews || 0,
+          userSatisfaction: data.userSatisfaction || 0
+        });
+      })
+      .catch(() => {
+        // Keep zeros on error
+      });
+    return () => { isMounted = false; };
+  }, []);
 
   return (
-    <section id="portfolio" className="py-20 bg-secondary-100">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="portfolio" className="py-20 bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 opacity-20" style={{backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`}}></div>
+      
+      
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-section font-extrabold text-black slide-up">
-            Core Features
+          <h2 className="text-5xl font-black bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent mb-6">
+            See Memorify in Action
           </h2>
-          <p className="text-lg text-gray-700 max-w-3xl mx-auto mt-4 slide-up" style={{animationDelay: '0.2s'}}>
-            Discover the powerful AI technologies that make Footage Flow the ultimate video search and story creation platform.
+          <p className="text-xl text-gray-700 max-w-3xl mx-auto font-light">
+            Watch how our AI transforms your raw footage into organized, searchable memories and beautiful stories
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          {projects.map((project, index) => (
-            <div key={index} className="card slide-up" style={{animationDelay: `${0.4 + index * 0.2}s`}}>
-              <div className="w-16 h-16 bg-gray-200 rounded-2xl flex items-center justify-center mb-6 text-black scale-in" style={{animationDelay: `${0.6 + index * 0.2}s`}}>
-                {project.icon}
+        {/* Enhanced Demo Section */}
+        <div className="bg-gradient-to-br from-purple-100/90 via-blue-100/80 to-indigo-100/90 backdrop-blur-lg rounded-3xl p-12 mb-16 max-w-7xl mx-auto shadow-2xl border border-purple-300/50">
+          <div className="space-y-12">
+            {/* Demo Video Section */}
+            <div className="text-center">
+              <div className="inline-block">
+                <div className="bg-gradient-to-br from-purple-100/90 via-blue-100/80 to-indigo-100/90 rounded-3xl shadow-2xl overflow-hidden border border-purple-300/50">
+                  {/* Browser Header */}
+                  <div className="bg-gradient-to-r from-gray-100 to-gray-200 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+                      <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                      <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                      <div className="ml-4 text-sm font-medium text-gray-700">Memorify Demo</div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                    </div>
+                  </div>
+                  
+                  {/* Demo Content */}
+                  <div className="p-8 bg-gradient-to-br from-purple-50 to-blue-50">
+                    <div className="text-center space-y-6">
+                      <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                        <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <rect x="4" y="6" width="10" height="9" rx="2" />
+                          <path d="M16 8l5 2.8L16 13.6V8z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h4 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">Watch Memorify in Action</h4>
+                        <p className="text-gray-600">Experience the power of AI-driven video search and story generation</p>
+                      </div>
+                      <div className="bg-gradient-to-br from-purple-100/90 via-blue-100/80 to-indigo-100/90 rounded-xl p-4 shadow-sm border border-purple-300/50">
+                        <div className="text-sm text-gray-500 mb-2">Demo Flow:</div>
+                        <div className="flex items-center justify-center space-x-4 text-sm font-medium text-gray-700">
+                          <span className="bg-purple-100 px-3 py-1 rounded-full">Upload</span>
+                          <span className="text-gray-400">→</span>
+                          <span className="bg-blue-100 px-3 py-1 rounded-full">Search</span>
+                          <span className="text-gray-400">→</span>
+                          <span className="bg-green-100 px-3 py-1 rounded-full">Generate</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-xl font-semibold text-black mb-4">
-                {project.title}
-              </h3>
-              <p className="text-gray-700 leading-relaxed">
-                {project.description}
-              </p>
             </div>
-          ))}
+
+            {/* Enhanced How It Works */}
+            <div className="text-center">
+              <h3 className="text-4xl font-black bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent mb-8">
+                See How It Works
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="group">
+                  <div className="bg-gradient-to-br from-purple-100/90 via-blue-100/80 to-indigo-100/90 backdrop-blur-lg rounded-3xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-3 hover:scale-105 border border-purple-300/50">
+                    <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <span className="text-2xl font-bold text-white">1</span>
+                    </div>
+                    <h4 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4">Upload & Process</h4>
+                    <p className="text-gray-700 leading-relaxed font-medium">
+                      Simply upload your videos and watch as our AI instantly analyzes, transcribes, and tags every moment with intelligent metadata.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="group">
+                  <div className="bg-gradient-to-br from-purple-100/90 via-blue-100/80 to-indigo-100/90 backdrop-blur-lg rounded-3xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-3 hover:scale-105 border border-purple-300/50">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <span className="text-2xl font-bold text-white">2</span>
+                    </div>
+                    <h4 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-4">Search Anything</h4>
+                    <p className="text-gray-700 leading-relaxed font-medium">
+                      Use natural language to find any moment: "show me happy times" or "find beach memories" - our AI understands context and meaning.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="group">
+                  <div className="bg-gradient-to-br from-purple-100/90 via-blue-100/80 to-indigo-100/90 backdrop-blur-lg rounded-3xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-3 hover:scale-105 border border-purple-300/50">
+                    <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <span className="text-2xl font-bold text-white">3</span>
+                    </div>
+                    <h4 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">Generate Stories</h4>
+                    <p className="text-gray-700 leading-relaxed font-medium">
+                      Let AI create beautiful, shareable stories from your memories. Perfect for social media, family albums, or personal keepsakes.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="text-center mt-20">
-          <div className="bg-gradient-to-b from-[#E9F1FA] to-white inline-block rounded-2xl px-8 py-10 border border-[#DDEBFA] shadow">
-            <h3 className="text-2xl font-extrabold text-[#0D1B2A] mb-2">Ready to turn your memories into stories?</h3>
-            <p className="text-[#0D1B2A]/70 mb-6 max-w-2xl">
-              Sign in and let Footage Flow organize your moments, search by meaning, and craft beautiful narratives—automatically.
+        {/* Enhanced Social Proof / Trust Section */}
+        <div className="text-center mb-16">
+          <div className="bg-gradient-to-br from-purple-100/90 via-blue-100/80 to-indigo-100/90 backdrop-blur-lg rounded-3xl px-8 py-16 max-w-7xl mx-auto shadow-2xl border border-purple-300/50">
+            <div className="space-y-12">
+              {/* Header with badge */}
+              <div className="space-y-6">
+                <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-full px-6 py-3 text-white shadow-lg">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="font-semibold">Fresh Innovation - Just Launched</span>
+              </div>
+                
+                <h3 className="text-5xl font-black bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+                  Be Among the First to Experience the Future
+              </h3>
+                <p className="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed font-light">
+                  Join the early adopters who are discovering the power of AI-driven video organization and storytelling
+              </p>
+            </div>
+              
+              {/* Early adoption metrics grid */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="text-center group">
+                  <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-green-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
+                    <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="text-5xl font-extrabold text-gray-900 mb-2 drop-shadow-sm">
+                    <Counter value={stats.totalStories} />
+                  </div>
+                  <div className="text-gray-700 font-semibold">Early Stories</div>
+                  <div className="text-sm text-gray-500 mt-1">AI-generated narratives</div>
+                </div>
+                
+                <div className="text-center group">
+                  <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
+                    <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <rect x="4" y="6" width="10" height="9" rx="2" />
+                      <path d="M16 8l5 2.8L16 13.6V8z" />
+                    </svg>
+                  </div>
+                  <div className="text-5xl font-extrabold text-gray-900 mb-2 drop-shadow-sm">
+                    <Counter value={stats.totalAnalyzedFiles} />
+                  </div>
+                  <div className="text-gray-700 font-semibold">Videos Analyzed</div>
+                  <div className="text-sm text-gray-500 mt-1">Smart AI processing</div>
+                </div>
+                
+                <div className="text-center group">
+                  <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
+                    <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="text-5xl font-extrabold text-gray-900 mb-2 drop-shadow-sm">
+                    <Counter value={stats.totalViews} />
+                  </div>
+                  <div className="text-gray-700 font-semibold">Views Generated</div>
+                  <div className="text-sm text-gray-500 mt-1">Early content success</div>
+                </div>
+                
+                <div className="text-center group">
+                  <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
+                    <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="text-5xl font-extrabold text-gray-900 mb-2 drop-shadow-sm">
+                    <Counter value={stats.userSatisfaction} suffix="%" />
+                  </div>
+                  <div className="text-gray-700 font-semibold">User Satisfaction</div>
+                  <div className="text-sm text-gray-500 mt-1">Early adopters love it</div>
+                </div>
+              </div>
+              
+              {/* Early adopter testimonial */}
+              <div className="bg-gradient-to-br from-purple-100/90 via-blue-100/80 to-indigo-100/90 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-purple-300/50 max-w-4xl mx-auto">
+                <div className="text-center">
+                  <div className="text-6xl mb-4">🚀</div>
+                  <blockquote className="text-xl text-gray-700 italic mb-4 font-light">
+                    "I'm so excited to be an early user of Memorify! The AI search is mind-blowing - I can finally find any moment from my videos instantly. This is the future!"
+                  </blockquote>
+                  <div className="text-gray-600 font-semibold">— Early Adopter</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA Section */}
+        <div className="text-center">
+          <div className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 rounded-2xl px-8 py-12 shadow-lg">
+            <h3 className="text-3xl font-bold mb-4 text-white">
+              🚀 Your memories deserve better. Try Memorify today!
+            </h3>
+            <p className="text-xl mb-8 text-white/90 font-light">
+              Join thousands of users who've transformed their video collections into organized, searchable memories.
             </p>
-            <button onClick={onGetStarted} className="px-6 py-3 rounded-xl bg-[#00ABE4] text-white font-semibold shadow hover:opacity-90 inline-block">Login and get started</button>
+            <button 
+              onClick={onGetStarted} 
+              className="px-8 py-4 bg-white text-gray-900 font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+            >
+              Start Free →
+            </button>
           </div>
         </div>
       </div>

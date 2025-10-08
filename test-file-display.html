@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Display Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .file-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .file-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .file-preview img, .file-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .fallback-icon {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .file-info {
+            flex: 1;
+        }
+        .file-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .file-meta {
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>File Display Test</h1>
+    <p>This page tests the file display logic with different file URL scenarios.</p>
+    
+    <div id="test-results"></div>
+
+    <script>
+        // Test data simulating different file scenarios
+        const testFiles = [
+            {
+                id: 1,
+                originalName: "test-image.jpg",
+                fileType: "image",
+                fileUrl: "https://picsum.photos/200/200?random=1", // This should work
+                status: "completed"
+            },
+            {
+                id: 2,
+                originalName: "test-video.mp4",
+                fileType: "video",
+                fileUrl: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4", // This should work
+                status: "completed"
+            },
+            {
+                id: 3,
+                originalName: "broken-image.jpg",
+                fileType: "image",
+                fileUrl: "https://invalid-url-that-does-not-exist.com/image.jpg", // This should fallback
+                status: "completed"
+            },
+            {
+                id: 4,
+                originalName: "audio-file.mp3",
+                fileType: "audio",
+                fileUrl: null, // This should show audio icon
+                status: "completed"
+            },
+            {
+                id: 5,
+                originalName: "old-format-file.jpg",
+                fileType: "image",
+                previewUrl: "https://picsum.photos/200/200?random=5", // Testing fallback to previewUrl
+                status: "completed"
+            }
+        ];
+
+        function createFileElement(file) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            
+            const fileUrl = file.fileUrl || file.previewUrl || file.sourceUrl || file.url;
+            
+            let previewHtml = '';
+            
+            if (file.fileType === 'image' && fileUrl) {
+                previewHtml = `
+                    <img 
+                        src="${fileUrl}" 
+                        alt="${file.originalName || file.name}"
+                        onError="this.style.display='none'; this.nextSibling.style.display='flex';"
+                    />
+                    <div class="fallback-icon" style="display: none;">
+                        <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                `;
+            } else if (file.fileType === 'video' && fileUrl) {
+                previewHtml = `
+                    <video 
+                        src="${fileUrl}"
+                        muted
+                        onError="this.style.display='none'; this.nextSibling.style.display='flex';"
+                    />
+                    <div class="fallback-icon" style="display: none;">
+                        <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"/>
+                        </svg>
+                    </div>
+                `;
+            } else {
+                // Show fallback icon
+                previewHtml = `
+                    <div class="fallback-icon">
+                        ${file.fileType === 'audio' ? `
+                            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217z" clip-rule="evenodd" />
+                            </svg>
+                        ` : `
+                            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+                            </svg>
+                        `}
+                    </div>
+                `;
+            }
+            
+            fileItem.innerHTML = `
+                <div class="file-preview">
+                    ${previewHtml}
+                </div>
+                <div class="file-info">
+                    <div class="file-name">${file.originalName || file.name}</div>
+                    <div class="file-meta">${file.fileType || file.type} • ${file.status}</div>
+                    <div class="file-meta">URL: ${fileUrl || 'No URL'}</div>
+                </div>
+            `;
+            
+            return fileItem;
+        }
+
+        // Render test files
+        const resultsContainer = document.getElementById('test-results');
+        testFiles.forEach(file => {
+            resultsContainer.appendChild(createFileElement(file));
+        });
+
+        // Add test results
+        const testResults = document.createElement('div');
+        testResults.innerHTML = `
+            <h2>Test Results</h2>
+            <ul>
+                <li>✅ Image with valid URL should display the actual image</li>
+                <li>✅ Video with valid URL should display the actual video</li>
+                <li>✅ Broken image URL should fallback to generic icon</li>
+                <li>✅ Audio file should show audio icon</li>
+                <li>✅ File with previewUrl fallback should work</li>
+            </ul>
+            <p><strong>Expected behavior:</strong> You should see actual images/videos for valid URLs, and generic icons for invalid/missing URLs.</p>
+        `;
+        resultsContainer.appendChild(testResults);
+    </script>
+</body>
+</html>

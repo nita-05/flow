@@ -159,7 +159,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
     const story = await Story.findOne({
       _id: req.params.id,
       userId: req.user._id
-    }).populate('files.fileId', 'originalName fileType fileUrl thumbnailUrl aiDescription transcription');
+    }).populate('files.fileId', 'originalName fileType fileUrl thumbnailUrl aiDescription transcription visionTags emotions');
 
     if (!story) {
       return res.status(404).json({
@@ -651,8 +651,8 @@ router.post('/:id/generate-film', authenticateToken, [
 
     const { style = 'heartwarming', duration = 30, mood = 'uplifting' } = req.body;
 
-    // Enforce daily generation cap per user
-    const limit = parseInt(process.env.VIDEO_GEN_DAILY_LIMIT || '15');
+    // Enforce daily generation cap per user (FREE with Hugging Face - higher limit)
+    const limit = parseInt(process.env.VIDEO_GEN_DAILY_LIMIT || '50');
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date();
@@ -713,6 +713,50 @@ router.post('/:id/generate-film', authenticateToken, [
   }
 });
 
+// Generate audio from story
+router.post('/:id/generate-audio', authenticateToken, async (req, res) => {
+  try {
+    const story = await Story.findOne({
+      _id: req.params.id,
+      userId: req.user._id
+    });
+
+    if (!story) {
+      return res.status(404).json({
+        message: 'Story not found',
+        code: 'STORY_NOT_FOUND'
+      });
+    }
+
+    console.log('🎵 Generating audio for story:', story.title);
+
+    // Initialize audio generation
+    story.audioGeneration = {
+      status: 'generating',
+      processingProgress: 0
+    };
+    await story.save();
+
+    // Start audio generation in background
+    generateStoryAudio(story._id).catch(console.error);
+
+    res.json({
+      message: 'Audio generation started',
+      audio: {
+        status: 'generating',
+        progress: 0
+      }
+    });
+
+  } catch (error) {
+    console.error('Generate audio error:', error);
+    res.status(500).json({
+      message: 'Failed to start audio generation',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+});
+
 // Get animated film status
 router.get('/:id/film-status', authenticateToken, async (req, res) => {
   try {
@@ -743,6 +787,41 @@ router.get('/:id/film-status', authenticateToken, async (req, res) => {
     console.error('Get film status error:', error);
     res.status(500).json({
       message: 'Failed to get film status',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+});
+
+// Get audio generation status
+router.get('/:id/audio-status', authenticateToken, async (req, res) => {
+  try {
+    const story = await Story.findOne({
+      _id: req.params.id,
+      userId: req.user._id
+    }).select('audioGeneration');
+
+    if (!story) {
+      return res.status(404).json({
+        message: 'Story not found',
+        code: 'STORY_NOT_FOUND'
+      });
+    }
+
+    if (!story.audioGeneration) {
+      return res.status(404).json({
+        message: 'No audio generation found',
+        code: 'NO_AUDIO'
+      });
+    }
+
+    res.json({
+      audio: story.audioGeneration
+    });
+
+  } catch (error) {
+    console.error('Get audio status error:', error);
+    res.status(500).json({
+      message: 'Failed to get audio status',
       error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
     });
   }
@@ -1081,6 +1160,96 @@ async function generateAnimatedFilm(storyId, options) {
       }
     } catch (saveError) {
       console.error('Error saving failed film status:', saveError);
+    }
+  }
+}
+
+// Background audio generation function
+async function generateStoryAudio(storyId) {
+  let timeoutId;
+  
+  try {
+    const story = await Story.findById(storyId);
+    if (!story) {
+      console.log('❌ Story not found for audio generation');
+      return;
+    }
+
+    console.log(`🎵 Starting audio generation for: ${story.title}`);
+
+    // Set a timeout to prevent hanging
+    timeoutId = setTimeout(async () => {
+      console.log('⏰ Audio generation timeout - marking as failed');
+      try {
+        const timeoutStory = await Story.findById(storyId);
+        if (timeoutStory) {
+          if (!timeoutStory.audioGeneration) {
+            timeoutStory.audioGeneration = {};
+          }
+          timeoutStory.audioGeneration.status = 'failed';
+          timeoutStory.audioGeneration.processingProgress = 0;
+          timeoutStory.audioGeneration.errorMessage = 'Generation timeout - please try again';
+          await timeoutStory.save();
+        }
+      } catch (saveError) {
+        console.error('Error saving timeout status:', saveError);
+      }
+    }, 300000); // 5 minute timeout
+
+    // Update progress - ensure audioGeneration exists
+    if (!story.audioGeneration) {
+      story.audioGeneration = {
+        status: 'generating',
+        processingProgress: 0
+      };
+    }
+    story.audioGeneration.processingProgress = 10;
+    await story.save();
+
+    console.log('🎵 Calling AI service for audio generation...');
+
+    // Generate the audio
+    const audioResult = await aiService.generateStoryAudio(story);
+
+    // Clear timeout since we succeeded
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+
+    // Update story with audio data
+    story.audioGeneration = {
+      ...story.audioGeneration,
+      ...audioResult,
+      status: 'completed',
+      processingProgress: 100,
+      generatedAt: new Date()
+    };
+
+    await story.save();
+
+    console.log(`✅ Audio generation completed for: ${story.title}`);
+
+  } catch (error) {
+    console.error('Audio generation error:', error);
+    
+    // Clear timeout since we're handling the error
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    
+    try {
+      const story = await Story.findById(storyId);
+      if (story) {
+        if (!story.audioGeneration) {
+          story.audioGeneration = {};
+        }
+        story.audioGeneration.status = 'failed';
+        story.audioGeneration.processingProgress = 0;
+        story.audioGeneration.errorMessage = error.message || 'Unknown error occurred';
+        await story.save();
+      }
+    } catch (saveError) {
+      console.error('Error saving failed audio status:', saveError);
     }
   }
 }

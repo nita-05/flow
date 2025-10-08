@@ -11,10 +11,13 @@ import Careers from './components/Careers';
 import Footer from './components/Footer';
 import LoginModal from './components/LoginModal';
 import Dashboard from './components/Dashboard';
+import { useScrollAnimation } from './hooks/useScrollAnimation';
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
+  // Activate scroll-reveal animations globally
+  useScrollAnimation();
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);

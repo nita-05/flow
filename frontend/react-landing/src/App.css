@@ -1,6 +1,8 @@
 /* Additional custom styles if needed */
 .App {
   text-align: left;
+  background: transparent;
+  min-height: 100vh;
 }
 
 /* Smooth scrolling */

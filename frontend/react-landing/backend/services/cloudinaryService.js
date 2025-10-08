@@ -7,7 +7,8 @@ const path = require('path');
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true
 });
 
 class CloudinaryService {
@@ -109,12 +110,40 @@ class CloudinaryService {
         fetch_format: 'auto'
       };
 
-      const thumbnailUrl = cloudinary.url(publicId, transformation);
+      const thumbnailUrl = cloudinary.url(publicId, {
+        ...transformation,
+        secure: true
+      });
       
       return thumbnailUrl;
     } catch (error) {
       console.error('❌ Thumbnail generation error:', error);
       throw new Error(`Thumbnail generation failed: ${error.message}`);
+    }
+  }
+
+  // Generate video thumbnail (extract frame)
+  async generateVideoThumbnail(publicId, options = {}) {
+    try {
+      const transformation = {
+        width: options.width || 300,
+        height: options.height || 300,
+        crop: 'fill',
+        quality: 'auto',
+        fetch_format: 'auto',
+        start_offset: options.startOffset || 'auto' // Extract frame at specified time or auto
+      };
+
+      const thumbnailUrl = cloudinary.url(publicId, {
+        resource_type: 'video',
+        ...transformation,
+        secure: true
+      });
+      
+      return thumbnailUrl;
+    } catch (error) {
+      console.error('❌ Video thumbnail generation error:', error);
+      throw new Error(`Video thumbnail generation failed: ${error.message}`);
     }
   }
 
@@ -221,6 +250,33 @@ class CloudinaryService {
   // Get multiple files upload middleware
   getMultipleUploadMiddleware() {
     return this.upload.array('files', 10);
+  }
+
+  // Upload base64 image data
+  async uploadBase64Image(base64Data, prefix = 'ai-generated') {
+    try {
+      console.log(`🎨 Uploading base64 image to Cloudinary...`);
+      
+      // Remove data URL prefix if present
+      const base64String = base64Data.replace(/^data:image\/[a-z]+;base64,/, '');
+      
+      const result = await cloudinary.uploader.upload(
+        `data:image/png;base64,${base64String}`,
+        {
+          folder: `best-of-us/${prefix}`,
+          resource_type: 'image',
+          format: 'png',
+          quality: 'auto',
+          fetch_format: 'auto'
+        }
+      );
+      
+      console.log(`✅ Base64 image uploaded successfully: ${result.secure_url}`);
+      return result.secure_url;
+    } catch (error) {
+      console.error('❌ Base64 image upload error:', error);
+      return null;
+    }
   }
 }
 

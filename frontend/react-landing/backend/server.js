@@ -8,10 +8,31 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const passport = require('./config/passport');
 
+// Environment validation
+const requiredEnvVars = [
+  'JWT_SECRET',
+  'SESSION_SECRET',
+  'MONGODB_URI'
+];
+
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+if (missingVars.length > 0) {
+  console.error('❌ Missing required environment variables:', missingVars.join(', '));
+  console.error('💡 Run: node setup-env.js to create .env file with required variables');
+  process.exit(1);
+}
+
+// Check Google OAuth configuration
+if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+  console.warn('⚠️  Google OAuth not configured - Google login will not work');
+  console.warn('💡 See GOOGLE_OAUTH_SETUP.md for setup instructions');
+}
+
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const fileRoutes = require('./routes/files');
 const storyRoutes = require('./routes/stories');
+const metricsRoutes = require('./routes/metrics');
 
 const app = express();
 
@@ -74,6 +95,9 @@ app.use(passport.session());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Static file serving for audio files
+app.use('/uploads/audio', express.static('uploads/audio'));
+
 // Database connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/bestofus', {
   useNewUrlParser: true,
@@ -87,6 +111,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/files', fileRoutes);
 app.use('/api/stories', storyRoutes);
+app.use('/api/metrics', metricsRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

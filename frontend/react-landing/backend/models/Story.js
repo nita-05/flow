@@ -131,6 +131,27 @@ const storySchema = new mongoose.Schema({
       max: 100
     }
   },
+  // Audio Generation
+  audioGeneration: {
+    audioUrl: String,
+    duration: Number,
+    voice: String,
+    format: String,
+    size: Number,
+    status: {
+      type: String,
+      enum: ['generating', 'completed', 'failed'],
+      default: 'generating'
+    },
+    processingProgress: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100
+    },
+    errorMessage: String,
+    generatedAt: Date
+  },
   // Version control
   version: {
     type: Number,

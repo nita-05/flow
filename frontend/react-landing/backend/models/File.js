@@ -122,6 +122,7 @@ const fileSchema = new mongoose.Schema({
   searchableText: String, // Combined text for search
   keywords: [String],
   categories: [String],
+  embedding: [Number], // Vector embedding for semantic search
   // Metadata
   location: {
     latitude: Number,

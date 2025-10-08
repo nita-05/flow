@@ -5,11 +5,18 @@ A comprehensive Node.js/Express backend for the Best of Us AI Video Search Platf
 ## 🚀 Features
 
 - **User Authentication** - JWT-based authentication with registration and login
+- **Google OAuth** - Sign in with Google integration
 - **Password Security** - bcrypt password hashing
 - **Data Validation** - Express-validator for input validation
 - **Security** - Helmet for security headers, rate limiting
 - **Database** - MongoDB with Mongoose ODM
 - **CORS** - Cross-origin resource sharing configuration
+
+## 🔴 IMPORTANT: OAuth Error Fix
+
+If you're seeing **"Unauthorized"** errors with Google OAuth, see:
+- **[FIX_OAUTH_ERROR.md](./FIX_OAUTH_ERROR.md)** - Complete fix guide
+- **[GOOGLE_OAUTH_SETUP.md](./GOOGLE_OAUTH_SETUP.md)** - Detailed OAuth setup
 
 ## 📋 Prerequisites
 
@@ -30,25 +37,30 @@ A comprehensive Node.js/Express backend for the Best of Us AI Video Search Platf
    ```
 
 3. **Set up environment variables:**
+   
+   **Option A - Quick Setup (Recommended):**
+   ```bash
+   node setup-env.js
+   ```
+   This will automatically create a `.env` file with secure JWT and session secrets.
+   
+   **Option B - Manual Setup:**
    ```bash
    cp env.example .env
    ```
 
-4. **Configure your .env file:**
+4. **Configure Google OAuth (Required for Google Sign-In):**
+   ```bash
+   node update-google-credentials.js
+   ```
+   Or manually edit `.env` and add your Google OAuth credentials.
+   
+   See [FIX_OAUTH_ERROR.md](./FIX_OAUTH_ERROR.md) for detailed setup instructions.
+
+5. **Update MongoDB connection:**
+   Edit `.env` and set your MongoDB connection string:
    ```env
-   # Database
-   MONGODB_URI=mongodb://localhost:27017/bestofus
-   # or for MongoDB Atlas: mongodb+srv://username:password@cluster.mongodb.net/bestofus
-
-   # JWT Secret (generate a strong random string)
-   JWT_SECRET=your_super_secret_jwt_key_here_make_it_long_and_random
-
-   # Server
-   PORT=5000
-   NODE_ENV=development
-
-   # CORS
-   FRONTEND_URL=http://localhost:3000
+   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/memorify
    ```
 
 ## 🏃‍♂️ Running the Server

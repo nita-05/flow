@@ -349,6 +349,26 @@ class StoryService {
     }
   }
 
+  // Generate audio from story
+  async generateAudio(storyId) {
+    try {
+      const response = await fetch(`${API_URL}/stories/${storyId}/generate-audio`, {
+        method: 'POST',
+        headers: this.getAuthHeaders()
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to generate audio');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Generate audio error:', error);
+      throw error;
+    }
+  }
+
   // Get animated film status
   async getAnimatedFilmStatus(storyId) {
     try {
@@ -365,6 +385,26 @@ class StoryService {
       return await response.json();
     } catch (error) {
       console.error('Get film status error:', error);
+      throw error;
+    }
+  }
+
+  // Get audio generation status
+  async getAudioStatus(storyId) {
+    try {
+      const response = await fetch(`${API_URL}/stories/${storyId}/audio-status`, {
+        method: 'GET',
+        headers: this.getAuthHeaders()
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to get audio status');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Get audio status error:', error);
       throw error;
     }
   }

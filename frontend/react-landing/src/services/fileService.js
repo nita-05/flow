@@ -134,6 +134,46 @@ class FileService {
     }
   }
 
+  // Debug search readiness
+  async debugSearchReadiness() {
+    try {
+      const response = await fetch(`${API_URL}/files/debug/search-readiness`, {
+        method: 'GET',
+        headers: this.getAuthHeaders()
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to get debug info');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Debug search readiness error:', error);
+      throw error;
+    }
+  }
+
+  // Reprocess embeddings for better search
+  async reprocessEmbeddings() {
+    try {
+      const response = await fetch(`${API_URL}/files/reprocess-embeddings`, {
+        method: 'POST',
+        headers: this.getAuthHeaders()
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to reprocess embeddings');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Reprocess embeddings error:', error);
+      throw error;
+    }
+  }
+
   // Get file processing status
   async getFileStatus(fileId) {
     try {

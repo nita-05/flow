@@ -1,46 +1,70 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   html {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Space Grotesk', 'Poppins', 'Inter', system-ui, sans-serif;
+    scroll-behavior: smooth;
   }
   
   body {
     color: #0D1B2A; /* Body Text */
-    background-color: #ffffff;
+    background: #ffffff;
+    font-weight: 400;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', 'Poppins', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
   }
 }
 
 @layer components {
   .btn-primary {
-    background-color: #00ABE4; /* Bright Blue */
+    background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
     color: #ffffff;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-    border-radius: 0.5rem;
+    padding: 1rem 2rem;
+    border-radius: 1rem;
     font-weight: 600;
-    font-size: 0.875rem;
+    font-size: 1rem;
     letter-spacing: 0.05em;
-    border: 2px solid #00ABE4;
-    transition-property: all;
-    transition-duration: 200ms;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn-primary:hover::before {
+    left: 100%;
   }
 
   .btn-primary:hover {
-    background-color: #007BB8; /* Hover Blue */
-    border-color: #007BB8;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 20px 40px rgba(139, 92, 246, 0.6);
   }
   
   .btn-secondary {
     background-color: transparent;
-    color: #00ABE4;
+    color: #3b82f6;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
     padding-top: 0.75rem;
@@ -49,14 +73,14 @@
     font-weight: 600;
     font-size: 0.875rem;
     letter-spacing: 0.05em;
-    border: 2px solid #00ABE4;
+    border: 2px solid #3b82f6;
     transition-property: all;
     transition-duration: 200ms;
   }
   
   .btn-outline {
     background-color: transparent;
-    color: #00ABE4;
+    color: #3b82f6;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
     padding-top: 0.75rem;
@@ -65,15 +89,15 @@
     font-weight: 600;
     font-size: 0.875rem;
     letter-spacing: 0.05em;
-    border: 2px solid #00ABE4;
+    border: 2px solid #3b82f6;
     transition-property: all;
     transition-duration: 200ms;
   }
 
   .btn-outline:hover {
-    background-color: #007BB8;
+    background-color: #3b82f6;
     color: #ffffff;
-    border-color: #007BB8;
+    border-color: #3b82f6;
   }
   
   .nav-link {
@@ -93,7 +117,7 @@
     bottom: -0.25rem;
     width: 0;
     height: 2px;
-    background-color: #00ABE4;
+    background-color: #3b82f6;
     transition: all 300ms;
   }
   
@@ -106,7 +130,7 @@
   }
 
   .accent {
-    color: #2ECC71; /* Accent/Success */
+    color: #10b981; /* Accent/Success */
   }
   
   .gradient-text {
@@ -114,11 +138,12 @@
   }
   
   .card {
-    @apply bg-white rounded-2xl p-8 shadow-soft border border-secondary-300 transition-all duration-300 hover:shadow-large hover:-translate-y-1;
+    @apply bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-white/20 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:scale-105;
+    background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
   }
   
   .hero-gradient {
-    @apply bg-gradient-to-br from-secondary-100 to-primary-50;
+    @apply bg-gradient-to-br from-purple-50 to-blue-50;
   }
 
   /* Animation Classes */

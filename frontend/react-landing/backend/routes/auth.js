@@ -276,17 +276,48 @@ router.get('/verify', authenticateToken, (req, res) => {
 
 // Google OAuth Routes
 router.get('/google', passport.authenticate('google', {
-  scope: ['openid', 'email', 'profile'],
+  scope: ['openid', 'email', 'profile', 'https://www.googleapis.com/auth/photoslibrary.readonly'],
   accessType: 'offline',
   prompt: 'consent'
 }));
 
 router.get('/google/callback', 
-  passport.authenticate('google', { failureRedirect: `${process.env.FRONTEND_URL}/login?error=google_auth_failed` }),
+  (req, res, next) => {
+    // Check if required environment variables are set
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+      console.error('❌ Google OAuth credentials not configured');
+      return res.status(500).json({
+        message: 'Google OAuth not configured',
+        error: 'Missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET in environment variables'
+      });
+    }
+    
+    if (!process.env.JWT_SECRET) {
+      console.error('❌ JWT_SECRET not configured');
+      return res.status(500).json({
+        message: 'JWT secret not configured',
+        error: 'Missing JWT_SECRET in environment variables'
+      });
+    }
+    
+    next();
+  },
+  passport.authenticate('google', { 
+    failureRedirect: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=google_auth_failed` 
+  }),
   (req, res) => {
     // Successful authentication: issue JWT so frontend can call protected APIs
     try {
+      console.log('🔑 Generating JWT token for user:', req.user._id);
+      console.log('🔑 JWT_SECRET present:', process.env.JWT_SECRET ? 'Yes' : 'No');
+      
+      if (!process.env.JWT_SECRET) {
+        console.error('❌ JWT_SECRET is missing from environment variables');
+        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=jwt_secret_missing`);
+      }
+      
       const token = generateToken(req.user._id);
+      console.log('✅ JWT token generated successfully');
 
       // Option 1: also set a non-HTTP-only cookie for quick dev usage
       // Note: For production, prefer HttpOnly cookies and header-based auth via frontend
@@ -298,10 +329,13 @@ router.get('/google/callback',
       });
 
       // Redirect with token as query param so frontend can store it
-      const redirectUrl = `${process.env.FRONTEND_URL}/dashboard?jwt=${encodeURIComponent(token)}`;
+      const redirectUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?jwt=${encodeURIComponent(token)}`;
+      console.log('🔄 Redirecting to dashboard:', redirectUrl);
       return res.redirect(redirectUrl);
     } catch (e) {
-      return res.redirect(`${process.env.FRONTEND_URL}/login?error=token_issue_failed`);
+      console.error('❌ JWT generation error:', e.message);
+      console.error('❌ Error stack:', e.stack);
+      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=token_issue_failed`);
     }
   }
 );

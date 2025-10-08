@@ -142,7 +142,7 @@ router.get('/', authenticateToken, async (req, res) => {
       .sort({ createdAt: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit)
-      .select('-filePath');
+      .select('-filePath -processingHistory');
 
     const total = await File.countDocuments(query);
 
@@ -225,7 +225,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// Search files
+// Search files with AI-powered semantic search
 router.post('/search', authenticateToken, [
   body('query').notEmpty().withMessage('Search query is required')
 ], async (req, res) => {
@@ -239,15 +239,80 @@ router.post('/search', authenticateToken, [
     }
 
     const { query, type, limit = 20 } = req.body;
+    console.log(`🔍 Starting AI-powered search for: "${query}"`);
 
+    // First, try AI-powered semantic search
+    try {
+      // Generate embedding for the search query
+      const queryEmbedding = await aiService.generateSearchEmbedding(query);
+      
+      if (queryEmbedding && queryEmbedding.length > 0) {
+        console.log('🤖 Using AI semantic search...');
+        
+        // Get all user files with embeddings
+        const baseQuery = { userId: req.user._id, status: 'completed' };
+        if (type) baseQuery.fileType = type;
+        
+        const allFiles = await File.find(baseQuery)
+          .select('-filePath')
+          .lean();
+
+        // Filter files that have embeddings
+        const filesWithEmbeddings = allFiles.filter(file => file.embedding && file.embedding.length > 0);
+        
+        if (filesWithEmbeddings.length > 0) {
+          console.log(`🤖 Found ${filesWithEmbeddings.length} files with embeddings for semantic search`);
+          
+          // Calculate similarity scores
+          const filesWithScores = filesWithEmbeddings.map(file => {
+            const similarity = aiService.calculateCosineSimilarity(queryEmbedding, file.embedding);
+            return {
+              ...file,
+              similarity
+            };
+          });
+
+          // Sort by similarity score (highest first) and filter by minimum threshold
+          const threshold = 0.2; // Lowered threshold for better results
+          const semanticResults = filesWithScores
+            .filter(file => file.similarity >= threshold)
+            .sort((a, b) => b.similarity - a.similarity)
+            .slice(0, limit);
+
+          console.log(`🤖 AI search found ${semanticResults.length} semantically similar results`);
+          
+          if (semanticResults.length > 0) {
+            return res.json({
+              query,
+              results: semanticResults,
+              count: semanticResults.length,
+              searchType: 'ai_semantic'
+            });
+          }
+        } else {
+          console.log('⚠️ No files with embeddings found, falling back to text search');
+        }
+      } else {
+        console.log('⚠️ Could not generate query embedding, falling back to text search');
+      }
+    } catch (aiError) {
+      console.log('⚠️ AI search failed, falling back to text search:', aiError.message);
+    }
+
+    // Fallback to enhanced text-based search
+    console.log('📝 Using enhanced text search as fallback...');
+    
     const searchQuery = {
       userId: req.user._id,
       status: 'completed',
       $or: [
         { originalName: { $regex: query, $options: 'i' } },
         { searchableText: { $regex: query, $options: 'i' } },
+        { aiDescription: { $regex: query, $options: 'i' } },
         { 'visionTags.tag': { $regex: query, $options: 'i' } },
-        { 'transcription.text': { $regex: query, $options: 'i' } }
+        { 'transcription.text': { $regex: query, $options: 'i' } },
+        { keywords: { $regex: query, $options: 'i' } },
+        { categories: { $regex: query, $options: 'i' } }
       ]
     };
 
@@ -255,15 +320,44 @@ router.post('/search', authenticateToken, [
       searchQuery.fileType = type;
     }
 
-    const files = await File.find(searchQuery)
+    let files = await File.find(searchQuery)
       .sort({ createdAt: -1 })
       .limit(limit)
       .select('-filePath');
 
+    // If no results found, try a broader search including processing files
+    if (files.length === 0) {
+      console.log('🔍 No completed files found, trying broader search...');
+      const broaderSearchQuery = {
+        userId: req.user._id,
+        $or: [
+          { originalName: { $regex: query, $options: 'i' } },
+          { searchableText: { $regex: query, $options: 'i' } },
+          { aiDescription: { $regex: query, $options: 'i' } },
+          { 'visionTags.tag': { $regex: query, $options: 'i' } },
+          { 'transcription.text': { $regex: query, $options: 'i' } },
+          { keywords: { $regex: query, $options: 'i' } },
+          { categories: { $regex: query, $options: 'i' } }
+        ]
+      };
+      
+      if (type) {
+        broaderSearchQuery.fileType = type;
+      }
+      
+      files = await File.find(broaderSearchQuery)
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .select('-filePath');
+    }
+
+    console.log(`📝 Text search for "${query}" found ${files.length} results`);
+
     res.json({
       query,
       results: files,
-      count: files.length
+      count: files.length,
+      searchType: 'text_fallback'
     });
 
   } catch (error) {
@@ -557,6 +651,136 @@ router.get('/:id/history', authenticateToken, async (req, res) => {
   }
 });
 
+// Debug endpoint to check search readiness
+router.get('/debug/search-readiness', authenticateToken, async (req, res) => {
+  try {
+    const files = await File.find({ userId: req.user._id })
+      .select('originalName status embedding aiDescription transcription searchableText processingProgress')
+      .lean();
+
+    const stats = {
+      totalFiles: files.length,
+      completedFiles: files.filter(f => f.status === 'completed').length,
+      filesWithEmbeddings: files.filter(f => f.embedding && f.embedding.length > 0).length,
+      filesWithTranscription: files.filter(f => f.transcription && f.transcription.text).length,
+      filesWithDescription: files.filter(f => f.aiDescription).length,
+      filesWithSearchableText: files.filter(f => f.searchableText).length,
+      processingFiles: files.filter(f => f.status === 'processing').length,
+      failedFiles: files.filter(f => f.status === 'failed').length
+    };
+
+    // Sample of files for debugging
+    const sampleFiles = files.slice(0, 5).map(file => ({
+      id: file._id,
+      originalName: file.originalName,
+      status: file.status,
+      hasEmbedding: !!(file.embedding && file.embedding.length > 0),
+      hasTranscription: !!(file.transcription && file.transcription.text),
+      hasDescription: !!file.aiDescription,
+      hasSearchableText: !!file.searchableText,
+      searchableTextPreview: file.searchableText ? file.searchableText.substring(0, 100) + '...' : null
+    }));
+
+    res.json({
+      message: 'Search readiness debug info',
+      stats,
+      sampleFiles,
+      recommendations: {
+        needMoreFiles: stats.totalFiles === 0 ? 'Upload some files first' : null,
+        needProcessing: stats.processingFiles > 0 ? `${stats.processingFiles} files still processing` : null,
+        needEmbeddings: stats.filesWithEmbeddings === 0 ? 'No files have embeddings yet - they will be generated during processing' : null,
+        readyForSearch: stats.filesWithEmbeddings > 0 || stats.completedFiles > 0 ? 'Search should work with text fallback' : 'Need completed files first'
+      }
+    });
+
+  } catch (error) {
+    console.error('Debug search readiness error:', error);
+    res.status(500).json({
+      message: 'Failed to get debug info',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+});
+
+// Reprocess files to generate embeddings
+router.post('/reprocess-embeddings', authenticateToken, async (req, res) => {
+  try {
+    console.log('🔄 Starting embedding reprocessing for user:', req.user._id);
+    
+    // Find completed files without embeddings
+    const filesNeedingEmbeddings = await File.find({
+      userId: req.user._id,
+      status: 'completed',
+      $or: [
+        { embedding: { $exists: false } },
+        { embedding: { $size: 0 } },
+        { embedding: null }
+      ]
+    });
+
+    console.log(`📊 Found ${filesNeedingEmbeddings.length} files needing embeddings`);
+
+    if (filesNeedingEmbeddings.length === 0) {
+      return res.json({
+        message: 'All files already have embeddings',
+        processed: 0,
+        total: 0
+      });
+    }
+
+    // Process files in batches to avoid rate limits
+    const batchSize = 3;
+    let processed = 0;
+
+    for (let i = 0; i < filesNeedingEmbeddings.length; i += batchSize) {
+      const batch = filesNeedingEmbeddings.slice(i, i + batchSize);
+      
+      await Promise.all(batch.map(async (file) => {
+        try {
+          console.log(`🔍 Processing embeddings for: ${file.originalName}`);
+          
+          // Generate embedding for the file's searchable text
+          if (file.searchableText) {
+            const embedding = await aiService.generateEmbedding(file.searchableText);
+            if (embedding && embedding.length > 0) {
+              file.embedding = embedding;
+              await file.save();
+              processed++;
+              console.log(`✅ Generated embedding for: ${file.originalName}`);
+            } else {
+              console.log(`⚠️ Failed to generate embedding for: ${file.originalName}`);
+            }
+          } else {
+            console.log(`⚠️ No searchable text for: ${file.originalName}`);
+          }
+        } catch (error) {
+          console.error(`❌ Error processing ${file.originalName}:`, error.message);
+        }
+      }));
+
+      // Wait between batches to avoid rate limits
+      if (i + batchSize < filesNeedingEmbeddings.length) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
+
+    console.log(`✅ Embedding reprocessing completed. Processed: ${processed}/${filesNeedingEmbeddings.length}`);
+
+    res.json({
+      message: 'Embedding reprocessing completed',
+      processed,
+      total: filesNeedingEmbeddings.length
+    });
+
+  } catch (error) {
+    console.error('Reprocess embeddings error:', error);
+    res.status(500).json({
+      message: 'Failed to reprocess embeddings',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+});
+
 // Background AI processing function
 async function processFileAI(fileId) {
   try {
@@ -591,16 +815,46 @@ async function processFileAI(fileId) {
     await file.save();
     await file.updateProcessingStatus('file_info', 'completed');
 
-    // Step 2: Transcription (for video/audio)
+    // Step 2: Generate thumbnail (for image/video)
+    if (file.fileType === 'image' || file.fileType === 'video') {
+      await file.updateProcessingStatus('thumbnail', 'processing');
+      file.processingProgress = 30;
+      await file.save();
+
+      try {
+        let thumbnailUrl;
+        if (file.fileType === 'image') {
+          // For images, create a thumbnail using Cloudinary
+          thumbnailUrl = await cloudinaryService.generateThumbnail(file.fileName, 'image');
+        } else if (file.fileType === 'video') {
+          // For videos, extract a frame as thumbnail
+          thumbnailUrl = await cloudinaryService.generateVideoThumbnail(file.fileName);
+        }
+        
+        if (thumbnailUrl) {
+          file.thumbnailUrl = thumbnailUrl;
+          file.processingProgress = 40;
+          await file.save();
+          await file.updateProcessingStatus('thumbnail', 'completed');
+        } else {
+          await file.updateProcessingStatus('thumbnail', 'failed', 'thumbnail generation failed');
+        }
+      } catch (error) {
+        console.error('Thumbnail generation error:', error);
+        await file.updateProcessingStatus('thumbnail', 'failed', error.message);
+      }
+    }
+
+    // Step 3: Transcription (for video/audio)
     if (file.fileType === 'video' || file.fileType === 'audio') {
       await file.updateProcessingStatus('transcription', 'processing');
-      file.processingProgress = 30;
+      file.processingProgress = 50;
       await file.save();
 
       try {
         const transcription = await aiService.transcribeAudio(file.filePath);
         file.transcription = transcription;
-        file.processingProgress = 50;
+        file.processingProgress = 60;
         await file.save();
         await file.updateProcessingStatus('transcription', 'completed');
       } catch (error) {
@@ -609,20 +863,34 @@ async function processFileAI(fileId) {
       }
     }
 
-    // Step 3: Visual analysis (for image/video)
+    // Step 4: Visual analysis (for image/video)
     if (file.fileType === 'image' || file.fileType === 'video') {
       await file.updateProcessingStatus('vision_analysis', 'processing');
-      file.processingProgress = file.fileType === 'video' ? 60 : 40;
+      file.processingProgress = file.fileType === 'video' ? 70 : 50;
       await file.save();
 
       try {
         const analysis = await aiService.analyzeVisualContent(file.filePath, file.fileType);
-        file.visionTags = analysis.objects || [];
+        
+        // Map AI response to database schema
+        file.visionTags = (analysis.objects || []).map(obj => ({
+          tag: obj.object,
+          confidence: obj.confidence,
+          category: 'ai_detected'
+        }));
+        
         file.aiDescription = analysis.description;
-        file.emotions = analysis.emotions || [];
+        
+        // Store emotions with confidence filtering (only high-confidence emotions)
+        file.emotions = (analysis.emotions || [])
+          .filter(emotion => emotion.confidence > 0.6) // Only emotions with >60% confidence
+          .map(emotion => ({
+            emotion: emotion.emotion,
+            confidence: emotion.confidence
+          }));
         file.objects = analysis.objects || [];
         file.faces = analysis.faces || [];
-        file.processingProgress = file.fileType === 'video' ? 80 : 60;
+        file.processingProgress = file.fileType === 'video' ? 80 : 70;
         await file.save();
         await file.updateProcessingStatus('vision_analysis', 'completed');
       } catch (error) {
@@ -631,7 +899,7 @@ async function processFileAI(fileId) {
       }
     }
 
-    // Step 4: Generate searchable text and keywords
+    // Step 5: Generate searchable text and keywords
     await file.updateProcessingStatus('text_processing', 'processing');
     file.searchableText = aiService.generateSearchableText(file);
     file.keywords = [
@@ -639,22 +907,26 @@ async function processFileAI(fileId) {
       ...(file.transcription?.text?.split(' ').slice(0, 10) || [])
     ].filter((v, i, a) => a.indexOf(v) === i); // Remove duplicates
 
-    file.processingProgress = 90;
+    file.processingProgress = 85;
     await file.save();
     await file.updateProcessingStatus('text_processing', 'completed');
 
-    // Step 5: Generate embedding for semantic search
+    // Step 6: Generate embedding for semantic search
     try {
       await file.updateProcessingStatus('embedding', 'processing');
+      console.log('🔍 Generating embedding for searchable text:', file.searchableText.substring(0, 100) + '...');
+      
       const embedding = await aiService.generateEmbedding(file.searchableText);
-      if (embedding) {
+      if (embedding && embedding.length > 0) {
         file.embedding = embedding;
+        console.log('✅ Embedding generated successfully, length:', embedding.length);
         await file.updateProcessingStatus('embedding', 'completed');
       } else {
-        await file.updateProcessingStatus('embedding', 'failed', 'embedding skipped due to rate limit');
+        console.log('⚠️ Embedding generation returned null/empty, using fallback');
+        await file.updateProcessingStatus('embedding', 'failed', 'embedding skipped due to rate limit or API issue');
       }
     } catch (error) {
-      console.error('Embedding error:', error);
+      console.error('❌ Embedding error:', error);
       await file.updateProcessingStatus('embedding', 'failed', error.message);
     }
 
