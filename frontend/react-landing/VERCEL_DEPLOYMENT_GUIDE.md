@@ -30,6 +30,8 @@ REACT_APP_API_URL=https://memorify-studio-backend.onrender.com
 REACT_APP_ENVIRONMENT=production
 ```
 
+**Note:** Make sure to set `REACT_APP_API_URL` in your Vercel environment variables to point to your Render backend URL.
+
 ### 4. Deploy
 1. Click **"Deploy"**
 2. Wait for build to complete (2-5 minutes)

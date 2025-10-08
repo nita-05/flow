@@ -47,7 +47,8 @@ const corsOptions = {
       'http://localhost:3001',
       process.env.CORS_ORIGIN,
       process.env.FRONTEND_URL,
-      'https://flow-qahqmc61w-nita-barikis-projects.vercel.app' // Your Vercel URL
+      'https://flow-qahqmc61w-nita-barikis-projects.vercel.app', // Previous Vercel URL
+      'https://flow-mnifvdz3z-nita-barikis-projects.vercel.app'  // Current Vercel URL
     ].filter(Boolean);
     
     if (allowedOrigins.includes(origin)) {
