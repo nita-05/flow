@@ -43,26 +43,35 @@ class AIService {
       'huggingface-video': { input: 0, output: 0 } // FREE!
     };
 
-    // Configure ffmpeg/ffprobe paths so visual analysis works on Windows
+    // Configure ffmpeg/ffprobe paths for both Windows (dev) and Linux (production)
     this.ffmpegAvailable = false;
     try {
       const fluentFfmpeg = require('fluent-ffmpeg');
-      
-      // Use system FFmpeg that we know works
-      const systemFfmpegPath = 'C:\\ffmpeg\\bin\\ffmpeg.exe\\ffmpeg-2025-09-15-git-16b8a7805b-full_build\\bin\\ffmpeg.exe';
-      const systemFfprobePath = 'C:\\ffmpeg\\bin\\ffmpeg.exe\\ffmpeg-2025-09-15-git-16b8a7805b-full_build\\bin\\ffprobe.exe';
-      
-      // Check if system FFmpeg exists
       const fs = require('fs');
-      if (fs.existsSync(systemFfmpegPath)) {
-        fluentFfmpeg.setFfmpegPath(systemFfmpegPath);
-        this.ffmpegAvailable = true;
-        console.log(`✅ Found FFmpeg at: ${systemFfmpegPath}`);
-      }
       
-      if (fs.existsSync(systemFfprobePath)) {
-        fluentFfmpeg.setFfprobePath(systemFfprobePath);
-        console.log(`✅ Found FFprobe at: ${systemFfprobePath}`);
+      // Check if we're on Windows (development) or Linux (production)
+      const isWindows = process.platform === 'win32';
+      
+      if (isWindows) {
+        // Windows development paths
+        const systemFfmpegPath = 'C:\\ffmpeg\\bin\\ffmpeg.exe\\ffmpeg-2025-09-15-git-16b8a7805b-full_build\\bin\\ffmpeg.exe';
+        const systemFfprobePath = 'C:\\ffmpeg\\bin\\ffmpeg.exe\\ffmpeg-2025-09-15-git-16b8a7805b-full_build\\bin\\ffprobe.exe';
+        
+        if (fs.existsSync(systemFfmpegPath)) {
+          fluentFfmpeg.setFfmpegPath(systemFfmpegPath);
+          this.ffmpegAvailable = true;
+          console.log(`✅ Found FFmpeg at: ${systemFfmpegPath}`);
+        }
+        
+        if (fs.existsSync(systemFfprobePath)) {
+          fluentFfmpeg.setFfprobePath(systemFfprobePath);
+          console.log(`✅ Found FFprobe at: ${systemFfprobePath}`);
+        }
+      } else {
+        // Linux production (Render) - let fluent-ffmpeg auto-detect
+        // FFmpeg is pre-installed on Render and available in PATH
+        this.ffmpegAvailable = true;
+        console.log('✅ FFmpeg auto-detected (Linux production environment)');
       }
       
       if (this.ffmpegAvailable) {
@@ -72,6 +81,7 @@ class AIService {
       }
     } catch (e) {
       console.warn('⚠️ FFmpeg configuration failed:', e.message);
+      this.ffmpegAvailable = false;
     }
   }
 
