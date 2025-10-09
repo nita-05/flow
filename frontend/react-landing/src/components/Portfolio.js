@@ -82,45 +82,45 @@ const Portfolio = ({ onGetStarted }) => {
               </div>
             </div>
 
-            {/* Demo Flow Section */}
-            <div className="mt-8">
-              <div className="text-center mb-6">
-                <h5 className="text-sm sm:text-base font-semibold text-gray-600 mb-4">Demo Flow:</h5>
+          </div>
+        </div>
+
+        {/* Demo Flow Section - Outside Demo Container */}
+        <div className="mb-16 max-w-7xl mx-auto px-6">
+          <div className="text-center mb-8">
+            <h5 className="text-lg sm:text-xl font-semibold text-gray-700 mb-6">Demo Flow:</h5>
+          </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
+            {/* Upload Step */}
+            <div className="flex items-center">
+              <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                Upload
               </div>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
-                {/* Upload Step */}
-                <div className="flex items-center">
-                  <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold text-sm sm:text-base shadow-lg">
-                    Upload
-                  </div>
-                  <div className="hidden sm:block ml-4">
-                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </div>
-                
-                {/* Search Step */}
-                <div className="flex items-center">
-                  <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold text-sm sm:text-base shadow-lg">
-                    Search
-                  </div>
-                  <div className="hidden sm:block ml-4">
-                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </div>
-                
-                {/* Generate Step */}
-                <div className="flex items-center">
-                  <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold text-sm sm:text-base shadow-lg">
-                    Generate
-                  </div>
-                </div>
+              <div className="hidden sm:block ml-6">
+                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
               </div>
             </div>
-
+            
+            {/* Search Step */}
+            <div className="flex items-center">
+              <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                Search
+              </div>
+              <div className="hidden sm:block ml-6">
+                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+            
+            {/* Generate Step */}
+            <div className="flex items-center">
+              <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                Generate
+              </div>
+            </div>
           </div>
         </div>
 
