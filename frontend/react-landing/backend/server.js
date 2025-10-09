@@ -34,6 +34,7 @@ const userRoutes = require('./routes/users');
 const fileRoutes = require('./routes/files');
 const storyRoutes = require('./routes/stories');
 const metricsRoutes = require('./routes/metrics');
+const googlePhotosRoutes = require('./routes/googlePhotos');
 
 const app = express();
 
@@ -149,6 +150,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/files', fileRoutes);
 app.use('/api/stories', storyRoutes);
 app.use('/api/metrics', metricsRoutes);
+app.use('/api/google-photos', googlePhotosRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

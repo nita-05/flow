@@ -88,6 +88,20 @@ const userSchema = new mongoose.Schema({
       type: Date,
       default: null
     }
+  },
+  googlePhotosTokens: {
+    accessToken: {
+      type: String,
+      default: null
+    },
+    refreshToken: {
+      type: String,
+      default: null
+    },
+    expiresAt: {
+      type: Date,
+      default: null
+    }
   }
 }, {
   timestamps: true

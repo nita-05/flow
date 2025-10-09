@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import authService from '../services/authService';
 import storyService from '../services/storyService';
-import { pickGooglePhotos } from '../services/googlePhotosService';
+import googlePhotosService from '../services/googlePhotosService';
 import fileService from '../services/fileService';
 import StoryEditor from './StoryEditor';
 import FileEditor from './FileEditor';
@@ -45,6 +45,13 @@ const Dashboard = () => {
   const [editingFile, setEditingFile] = useState(null);
   const [editingStructure, setEditingStructure] = useState(null);
   const [viewingVersions, setViewingVersions] = useState(null);
+  
+  // Google Photos modal states
+  const [showGooglePhotosModal, setShowGooglePhotosModal] = useState(false);
+  const [googlePhotosMedia, setGooglePhotosMedia] = useState([]);
+  const [selectedGooglePhotos, setSelectedGooglePhotos] = useState([]);
+  const [isLoadingGooglePhotos, setIsLoadingGooglePhotos] = useState(false);
+  const [googlePhotosPageToken, setGooglePhotosPageToken] = useState(null);
 
   useEffect(() => {
     console.log('Dashboard useEffect running');
@@ -145,35 +152,18 @@ const Dashboard = () => {
       setIsProcessing(true);
       console.log('Starting Google Photos import...');
       
-      // Add a timeout to prevent hanging
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Google Photos import timed out. Please try again or use "Choose Files" to upload your photos instead.')), 60000);
-      });
+      // Check if Google Photos is already connected
+      const connectionStatus = await googlePhotosService.getConnectionStatus();
       
-      const importPromise = pickGooglePhotos(50);
-      const items = await Promise.race([importPromise, timeoutPromise]);
-      
-      if (items && items.length > 0) {
-        console.log('Google Photos items received:', items.length);
-        const mapped = items.map((item, index) => ({
-          id: `${Date.now()}-${index}`,
-          name: item.name || `Google Photo ${index + 1}`,
-          type: item.mimeType || 'image/jpeg',
-          size: item.size || 0,
-          uploadDate: new Date().toISOString(),
-          status: 'processed',
-          tags: ['google', 'photos', 'memory'],
-          transcript: '',
-                            previewUrl: item.thumbnailUrl || item.url || '',
-                            sourceUrl: item.url || '',
-                            url: item.url || '',
-          source: 'google_photos'
-        }));
-        setUploadedFiles(prev => [...prev, ...mapped]);
-        console.log('Google Photos files added to upload list');
-      } else {
-        console.log('No Google Photos items selected');
+      if (!connectionStatus.connected) {
+        // Initiate OAuth flow
+        await googlePhotosService.initiateAuth();
+        return; // User will be redirected to Google OAuth
       }
+
+      // If connected, show media selection modal
+      setShowGooglePhotosModal(true);
+      
     } catch (err) {
       console.error('Google Photos import error:', err);
       alert(`Google Photos import failed: ${err.message || 'Unknown error'}. Please try using "Choose Files" to upload your photos instead.`);
@@ -181,6 +171,90 @@ const Dashboard = () => {
       setIsProcessing(false);
     }
   };
+
+  // Load Google Photos media when modal opens
+  const loadGooglePhotosMedia = async (pageToken = null) => {
+    try {
+      setIsLoadingGooglePhotos(true);
+      const response = await googlePhotosService.getMediaItems(50, pageToken);
+      
+      if (response.mediaItems) {
+        const filteredMedia = response.mediaItems.filter(item => 
+          googlePhotosService.isFileSupported(item.mimeType)
+        );
+        
+        if (pageToken) {
+          setGooglePhotosMedia(prev => [...prev, ...filteredMedia]);
+        } else {
+          setGooglePhotosMedia(filteredMedia);
+        }
+        
+        setGooglePhotosPageToken(response.nextPageToken || null);
+      }
+    } catch (error) {
+      console.error('Error loading Google Photos media:', error);
+      alert('Failed to load Google Photos. Please try again.');
+    } finally {
+      setIsLoadingGooglePhotos(false);
+    }
+  };
+
+  // Handle Google Photos selection
+  const handleGooglePhotoSelect = (mediaItem) => {
+    setSelectedGooglePhotos(prev => {
+      const isSelected = prev.some(item => item.id === mediaItem.id);
+      if (isSelected) {
+        return prev.filter(item => item.id !== mediaItem.id);
+      } else {
+        return [...prev, mediaItem];
+      }
+    });
+  };
+
+  // Import selected Google Photos
+  const importSelectedGooglePhotos = async () => {
+    if (selectedGooglePhotos.length === 0) {
+      alert('Please select at least one photo or video to import.');
+      return;
+    }
+
+    try {
+      setIsProcessing(true);
+      const mediaItemIds = selectedGooglePhotos.map(item => item.id);
+      
+      const result = await googlePhotosService.importMediaItems(mediaItemIds);
+      
+      if (result.imported && result.imported.length > 0) {
+        alert(`Successfully imported ${result.imported.length} items!`);
+        
+        // Refresh files list
+        await loadUserData();
+        
+        // Close modal and reset selection
+        setShowGooglePhotosModal(false);
+        setSelectedGooglePhotos([]);
+        setGooglePhotosMedia([]);
+        setGooglePhotosPageToken(null);
+      }
+      
+      if (result.failed && result.failed.length > 0) {
+        console.warn('Some items failed to import:', result.failed);
+      }
+      
+    } catch (error) {
+      console.error('Error importing Google Photos:', error);
+      alert('Failed to import selected photos. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Load media when modal opens
+  useEffect(() => {
+    if (showGooglePhotosModal) {
+      loadGooglePhotosMedia();
+    }
+  }, [showGooglePhotosModal]);
 
   const handleMediaClick = (file) => {
     console.log('🎯 MEDIA CLICKED:', file);
@@ -3349,6 +3423,114 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Google Photos Import Modal */}
+      {showGooglePhotosModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Import from Google Photos</h2>
+              <button
+                onClick={() => {
+                  setShowGooglePhotosModal(false);
+                  setSelectedGooglePhotos([]);
+                  setGooglePhotosMedia([]);
+                  setGooglePhotosPageToken(null);
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <p className="text-gray-600">
+                  Select photos and videos to import to your Memorify collection
+                </p>
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm text-gray-500">
+                    {selectedGooglePhotos.length} selected
+                  </span>
+                  <button
+                    onClick={importSelectedGooglePhotos}
+                    disabled={selectedGooglePhotos.length === 0 || isProcessing}
+                    className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-2 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all duration-300"
+                  >
+                    {isProcessing ? 'Importing...' : `Import ${selectedGooglePhotos.length} Items`}
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-96 overflow-y-auto">
+                {googlePhotosMedia.map((mediaItem) => {
+                  const isSelected = selectedGooglePhotos.some(item => item.id === mediaItem.id);
+                  return (
+                    <div
+                      key={mediaItem.id}
+                      onClick={() => handleGooglePhotoSelect(mediaItem)}
+                      className={`relative cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+                        isSelected ? 'border-purple-500 ring-2 ring-purple-200' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="aspect-square relative">
+                        <img
+                          src={mediaItem.baseUrl + '=w400-h400-c'}
+                          alt={mediaItem.filename}
+                          className="w-full h-full object-cover"
+                        />
+                        {isSelected && (
+                          <div className="absolute inset-0 bg-purple-500 bg-opacity-20 flex items-center justify-center">
+                            <div className="bg-purple-500 text-white rounded-full p-1">
+                              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                              </svg>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-2">
+                        <p className="text-xs text-gray-600 truncate">{mediaItem.filename}</p>
+                        <p className="text-xs text-gray-400">
+                          {googlePhotosService.formatDate(mediaItem.mediaMetadata?.creationTime)}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {isLoadingGooglePhotos && (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full"></div>
+                  <span className="ml-2 text-gray-600">Loading more photos...</span>
+                </div>
+              )}
+
+              {googlePhotosPageToken && !isLoadingGooglePhotos && (
+                <div className="flex justify-center mt-6">
+                  <button
+                    onClick={() => loadGooglePhotosMedia(googlePhotosPageToken)}
+                    className="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Load More Photos
+                  </button>
+                </div>
+              )}
+
+              {googlePhotosMedia.length === 0 && !isLoadingGooglePhotos && (
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">📷</div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No Photos Found</h3>
+                  <p className="text-gray-600">No supported photos or videos found in your Google Photos library.</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
