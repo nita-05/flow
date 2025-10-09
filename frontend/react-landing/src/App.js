@@ -63,6 +63,16 @@ function App() {
         setCurrentPage('dashboard');
       } else {
         console.log('ℹ️ No JWT found in URL');
+        // Check if we have a valid token in localStorage from previous session
+        const existingToken = authService.getToken();
+        if (existingToken) {
+          console.log('ℹ️ Found existing token in localStorage, checking validity...');
+          // If we're on dashboard route and have a token, go to dashboard
+          if (window.location.pathname === '/dashboard') {
+            console.log('✅ On dashboard route with existing token, going to dashboard');
+            setCurrentPage('dashboard');
+          }
+        }
       }
     } catch (error) {
       console.error('❌ Error handling JWT:', error);

@@ -329,9 +329,14 @@ router.get('/google/callback',
       });
 
       // Redirect with token as query param so frontend can store it
-      const redirectUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?jwt=${encodeURIComponent(token)}`;
-      console.log('🔄 Redirecting to dashboard:', redirectUrl);
-      return res.redirect(redirectUrl);
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+      const redirectUrl = `${frontendUrl}/dashboard?jwt=${encodeURIComponent(token)}`;
+      console.log('🔄 Frontend URL from env:', frontendUrl);
+      console.log('🔄 Full redirect URL:', redirectUrl);
+      console.log('🔄 JWT token length:', token.length);
+      
+      // Use a more explicit redirect that should preserve query params
+      res.redirect(302, redirectUrl);
     } catch (e) {
       console.error('❌ JWT generation error:', e.message);
       console.error('❌ Error stack:', e.stack);
@@ -339,6 +344,16 @@ router.get('/google/callback',
     }
   }
 );
+
+// Debug endpoint to check environment variables
+router.get('/debug', (req, res) => {
+  res.json({
+    FRONTEND_URL: process.env.FRONTEND_URL,
+    NODE_ENV: process.env.NODE_ENV,
+    GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL,
+    currentUrl: req.protocol + '://' + req.get('host') + req.originalUrl
+  });
+});
 
 // Get current session user
 router.get('/session', (req, res) => {
