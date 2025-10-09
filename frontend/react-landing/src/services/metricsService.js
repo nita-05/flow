@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_URL = 'https://memorify-backend-ik4b.onrender.com/api';
 console.log('🔍 Metrics API_URL:', API_URL);
 
 async function fetchSummary() {
