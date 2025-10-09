@@ -17,6 +17,7 @@ import authService from './services/authService';
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
+  const [isNavigating, setIsNavigating] = useState(false);
   // Activate scroll-reveal animations globally
   useScrollAnimation();
 
@@ -35,8 +36,12 @@ function App() {
     const testToken = 'test-jwt-token-12345';
     authService.setToken(testToken);
     console.log('🧪 Test token set:', authService.getToken());
-    setCurrentPage('dashboard');
+    console.log('🧪 Navigating to dashboard...');
+    setIsNavigating(true);
+    // First change the URL, then set the page state
     window.history.pushState({}, '', '/dashboard');
+    setCurrentPage('dashboard');
+    console.log('🧪 Page state set to dashboard');
   };
 
   useEffect(() => {
@@ -108,8 +113,9 @@ function App() {
           console.log('✅ Token found, going to dashboard');
           setCurrentPage('dashboard');
         } else {
-          console.log('❌ No token found, staying on home');
+          console.log('❌ No token found, redirecting to home');
           setCurrentPage('home');
+          window.history.pushState({}, '', '/');
         }
       } else {
         console.log('🔍 Non-dashboard route, setting to home');
@@ -117,8 +123,8 @@ function App() {
       }
     };
 
-    // Check route on mount (but only if no JWT processing happened)
-    if (!window.location.search.includes('jwt=')) {
+    // Check route on mount (but only if no JWT processing happened and not navigating)
+    if (!window.location.search.includes('jwt=') && !isNavigating) {
       checkRoute();
     }
 
@@ -147,7 +153,7 @@ function App() {
       window.removeEventListener('popstate', handlePopState);
       clearInterval(interval);
     };
-  }, [currentPage]);
+  }, [currentPage, isNavigating]);
 
   if (currentPage === 'dashboard') {
     return <Dashboard />;
