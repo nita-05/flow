@@ -35,8 +35,9 @@ function App() {
       const jwt = params.get('jwt');
       if (jwt) {
         localStorage.setItem('token', jwt);
-        // Force navigation to dashboard to avoid any routing race conditions
-        window.location.replace('/dashboard');
+        // Clear the URL parameters and navigate to dashboard
+        window.history.replaceState({}, '', '/dashboard');
+        setCurrentPage('dashboard');
       }
     } catch {}
 
