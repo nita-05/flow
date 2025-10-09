@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OAuth Test</title>
+</head>
+<body>
+    <h1>OAuth Test Page</h1>
+    <button onclick="testOAuth()">Test Google OAuth</button>
+    
+    <script>
+        function testOAuth() {
+            const apiUrl = 'https://memorify-studio-backend.onrender.com';
+            const redirectUrl = `${apiUrl}/api/auth/google`;
+            console.log('🔍 Testing OAuth redirect to:', redirectUrl);
+            window.location.href = redirectUrl;
+        }
+    </script>
+</body>
+</html>
