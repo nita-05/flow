@@ -18,8 +18,13 @@ class AuthService {
     localStorage.removeItem('user');
   }
 
-  // Get stored token
+  // Get stored token (always check localStorage for fresh tokens)
   getToken() {
+    // Always check localStorage first to get the latest token
+    const freshToken = localStorage.getItem('token');
+    if (freshToken && freshToken !== this.token) {
+      this.token = freshToken;
+    }
     return this.token || localStorage.getItem('token');
   }
 

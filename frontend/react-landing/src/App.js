@@ -34,12 +34,20 @@ function App() {
       const params = new URLSearchParams(window.location.search);
       const jwt = params.get('jwt');
       if (jwt) {
+        console.log('JWT token received from OAuth:', jwt.substring(0, 20) + '...');
         localStorage.setItem('token', jwt);
+        // Import authService and set the token properly
+        import('./services/authService').then(({ default: authService }) => {
+          authService.setToken(jwt);
+          console.log('Token set in authService');
+        });
         // Clear the URL parameters and navigate to dashboard
         window.history.replaceState({}, '', '/dashboard');
         setCurrentPage('dashboard');
       }
-    } catch {}
+    } catch (error) {
+      console.error('Error handling JWT:', error);
+    }
 
     // Check current route and update state
     const checkRoute = () => {

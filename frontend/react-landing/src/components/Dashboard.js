@@ -53,6 +53,7 @@ const Dashboard = () => {
     const checkAuth = async () => {
       try {
         console.log('Checking authentication...');
+        console.log('Current token:', authService.getToken() ? 'Present' : 'Missing');
         const userData = await authService.getCurrentUser();
         console.log('User authenticated successfully:', userData);
         console.log('Profile picture URLs:', {
@@ -70,6 +71,7 @@ const Dashboard = () => {
         setIsLoading(false);
       } catch (error) {
         console.log('Authentication failed:', error);
+        console.log('Error details:', error.message);
         // If session-based auth fails, check localStorage
         const localUser = authService.getUser();
         if (localUser) {
