@@ -74,33 +74,34 @@ const LoginModal = ({ isOpen, onClose, onNavigateToDashboard }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white rounded-2xl w-full max-w-md max-h-[95vh] overflow-y-auto shadow-xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-primary-900">Start Your Story Journey</h2>
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
+          <h2 className="text-xl sm:text-2xl font-bold text-primary-900">Start Your Story Journey</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl"
+            className="text-gray-400 hover:text-gray-600 text-2xl sm:text-3xl p-1"
+            aria-label="Close modal"
           >
             ×
           </button>
         </div>
 
         {/* Body */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {/* Error Message */}
           {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm sm:text-base">
               {error}
             </div>
           )}
 
           {/* Tabs */}
-          <div className="flex mb-6 border-b border-gray-200">
+          <div className="flex mb-4 sm:mb-6 border-b border-gray-200">
             <button
               onClick={() => setActiveTab('login')}
-              className={`flex-1 py-3 text-sm font-medium border-b-2 transition-colors ${
+              className={`flex-1 py-2 sm:py-3 text-sm sm:text-base font-medium border-b-2 transition-colors ${
                 activeTab === 'login'
                   ? 'border-primary-900 text-primary-900'
                   : 'border-transparent text-gray-500'
@@ -110,7 +111,7 @@ const LoginModal = ({ isOpen, onClose, onNavigateToDashboard }) => {
             </button>
             <button
               onClick={() => setActiveTab('signup')}
-              className={`flex-1 py-3 text-sm font-medium border-b-2 transition-colors ${
+              className={`flex-1 py-2 sm:py-3 text-sm sm:text-base font-medium border-b-2 transition-colors ${
                 activeTab === 'signup'
                   ? 'border-primary-900 text-primary-900'
                   : 'border-transparent text-gray-500'
@@ -147,7 +148,7 @@ const LoginModal = ({ isOpen, onClose, onNavigateToDashboard }) => {
 
           {/* Forms */}
           {activeTab === 'login' ? (
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
               <div>
                 <label className="block text-sm font-medium text-primary-900 mb-2">
                   Email Address
@@ -158,7 +159,7 @@ const LoginModal = ({ isOpen, onClose, onNavigateToDashboard }) => {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-900 focus:border-transparent"
+                  className="w-full px-3 py-3 sm:py-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-900 focus:border-transparent text-base"
                   placeholder="Enter your email"
                 />
               </div>
@@ -172,20 +173,20 @@ const LoginModal = ({ isOpen, onClose, onNavigateToDashboard }) => {
                   value={formData.password}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-900 focus:border-transparent"
+                  className="w-full px-3 py-3 sm:py-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-900 focus:border-transparent text-base"
                   placeholder="Enter your password"
                 />
               </div>
               <button 
                 type="submit" 
                 disabled={loading}
-                className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed py-3 sm:py-4 text-base sm:text-lg"
               >
                 {loading ? 'Logging in...' : 'Login'}
               </button>
             </form>
           ) : (
-            <form onSubmit={handleRegister} className="space-y-4">
+            <form onSubmit={handleRegister} className="space-y-3 sm:space-y-4">
               <div>
                 <label className="block text-sm font-medium text-primary-900 mb-2">
                   Full Name
@@ -196,7 +197,7 @@ const LoginModal = ({ isOpen, onClose, onNavigateToDashboard }) => {
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-900 focus:border-transparent"
+                  className="w-full px-3 py-3 sm:py-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-900 focus:border-transparent text-base"
                   placeholder="Enter your full name"
                 />
               </div>
@@ -210,7 +211,7 @@ const LoginModal = ({ isOpen, onClose, onNavigateToDashboard }) => {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-900 focus:border-transparent"
+                  className="w-full px-3 py-3 sm:py-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-900 focus:border-transparent text-base"
                   placeholder="Enter your email"
                 />
               </div>
@@ -224,14 +225,14 @@ const LoginModal = ({ isOpen, onClose, onNavigateToDashboard }) => {
                   value={formData.password}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-900 focus:border-transparent"
+                  className="w-full px-3 py-3 sm:py-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-900 focus:border-transparent text-base"
                   placeholder="Create a password"
                 />
               </div>
               <button 
                 type="submit" 
                 disabled={loading}
-                className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed py-3 sm:py-4 text-base sm:text-lg"
               >
                 {loading ? 'Creating Account...' : 'Create Account'}
               </button>
