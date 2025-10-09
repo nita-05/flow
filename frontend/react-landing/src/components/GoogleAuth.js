@@ -4,7 +4,7 @@ const GoogleAuth = ({ onSuccess, onError }) => {
   const handleGoogleLogin = () => {
     try {
       // Use environment variable or fallback to production backend
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://memorify-studio-backend.onrender.com';
+      const apiUrl = 'https://memorify-backend-ik4b.onrender.com';
       const redirectUrl = `${apiUrl}/api/auth/google`;
       
       console.log('🔐 Google OAuth - API URL:', apiUrl);

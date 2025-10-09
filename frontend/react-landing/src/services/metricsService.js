@@ -1,4 +1,4 @@
-const API_URL = 'https://memorify-backend-ik4b.onrender.com/api';
+const API_URL = '/api';
 console.log('🔍 Metrics API_URL:', API_URL);
 
 async function fetchSummary() {
