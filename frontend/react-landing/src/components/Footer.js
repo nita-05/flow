@@ -26,10 +26,10 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-bold mb-6 text-white">Product</h3>
             <ul className="space-y-3">
-              <li><a href="#about" className="text-white/80 hover:text-white transition-colors duration-300 hover:translate-x-1 inline-block">Features</a></li>
-              <li><a href="#portfolio" className="text-white/80 hover:text-white transition-colors duration-300 hover:translate-x-1 inline-block">How It Works</a></li>
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors duration-300 hover:translate-x-1 inline-block">Pricing</a></li>
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors duration-300 hover:translate-x-1 inline-block">Demo</a></li>
+              <li><a href="/features" className="text-white/80 hover:text-white transition-colors duration-300 hover:translate-x-1 inline-block">Features</a></li>
+              <li><a href="/how-it-works" className="text-white/80 hover:text-white transition-colors duration-300 hover:translate-x-1 inline-block">How It Works</a></li>
+              <li><a href="/" className="text-white/80 hover:text-white transition-colors duration-300 hover:translate-x-1 inline-block">Pricing</a></li>
+              <li><a href="/" className="text-white/80 hover:text-white transition-colors duration-300 hover:translate-x-1 inline-block">Demo</a></li>
             </ul>
           </div>
 
@@ -37,10 +37,10 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-bold mb-6 text-white">Support</h3>
             <ul className="space-y-3">
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors duration-300 hover:translate-x-1 inline-block">Help Center</a></li>
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors duration-300 hover:translate-x-1 inline-block">Contact Us</a></li>
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors duration-300 hover:translate-x-1 inline-block">Privacy Policy</a></li>
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors duration-300 hover:translate-x-1 inline-block">Terms of Service</a></li>
+              <li><a href="/privacy" className="text-white/80 hover:text-white transition-colors duration-300 hover:translate-x-1 inline-block">Help Center</a></li>
+              <li><a href="/contact" className="text-white/80 hover:text-white transition-colors duration-300 hover:translate-x-1 inline-block">Contact Us</a></li>
+              <li><a href="/privacy" className="text-white/80 hover:text-white transition-colors duration-300 hover:translate-x-1 inline-block">Privacy Policy</a></li>
+              <li><a href="/terms" className="text-white/80 hover:text-white transition-colors duration-300 hover:translate-x-1 inline-block">Terms of Service</a></li>
             </ul>
           </div>
         </div>
