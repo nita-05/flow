@@ -93,9 +93,14 @@ const Portfolio = ({ onGetStarted }) => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
             {/* Upload Step */}
             <div className="flex items-center">
-              <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+              <button 
+                onClick={() => {
+                  alert("🔐 Please login first to upload your videos!");
+                }}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer"
+              >
                 Upload
-              </div>
+              </button>
               <div className="hidden sm:block ml-6">
                 <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -105,9 +110,14 @@ const Portfolio = ({ onGetStarted }) => {
             
             {/* Search Step */}
             <div className="flex items-center">
-              <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+              <button 
+                onClick={() => {
+                  alert("🔐 Please login first to search your memories!");
+                }}
+                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer"
+              >
                 Search
-              </div>
+              </button>
               <div className="hidden sm:block ml-6">
                 <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -117,9 +127,14 @@ const Portfolio = ({ onGetStarted }) => {
             
             {/* Generate Step */}
             <div className="flex items-center">
-              <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+              <button 
+                onClick={() => {
+                  alert("🔐 Please login first to generate stories!");
+                }}
+                className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer"
+              >
                 Generate
-              </div>
+              </button>
             </div>
           </div>
         </div>
