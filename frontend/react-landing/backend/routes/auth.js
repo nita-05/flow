@@ -145,11 +145,13 @@ router.post('/login', [
 // Get current user profile
 router.get('/me', authenticateToken, async (req, res) => {
   try {
+    console.log('🔍 /me endpoint called for user:', req.user.email);
+    console.log('🔍 User profile:', req.user.getPublicProfile());
     res.json({
       user: req.user.getPublicProfile()
     });
   } catch (error) {
-    console.error('Get profile error:', error);
+    console.error('❌ Get profile error:', error);
     res.status(500).json({
       message: 'Failed to get user profile',
       error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'

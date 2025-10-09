@@ -4,10 +4,14 @@ const User = require('../models/User');
 // Middleware to verify JWT token
 const authenticateToken = async (req, res, next) => {
   try {
+    console.log('🔍 Auth middleware called for:', req.path);
     const authHeader = req.headers['authorization'];
+    console.log('🔍 Auth header:', authHeader ? 'Present' : 'Missing');
     const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+    console.log('🔍 Token:', token ? token.substring(0, 20) + '...' : 'Missing');
 
     if (!token) {
+      console.log('❌ No token provided');
       return res.status(401).json({ 
         message: 'Access token required',
         code: 'NO_TOKEN'
@@ -15,12 +19,17 @@ const authenticateToken = async (req, res, next) => {
     }
 
     // Verify token
+    console.log('🔍 Verifying token...');
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log('🔍 Token decoded:', decoded);
     
     // Get user from database
+    console.log('🔍 Looking up user:', decoded.userId);
     const user = await User.findById(decoded.userId).select('-password');
+    console.log('🔍 User found:', user ? 'Yes' : 'No');
     
     if (!user) {
+      console.log('❌ User not found in database');
       return res.status(401).json({ 
         message: 'Invalid token - user not found',
         code: 'INVALID_TOKEN'
@@ -29,6 +38,7 @@ const authenticateToken = async (req, res, next) => {
 
     // Add user to request object
     req.user = user;
+    console.log('✅ User authenticated:', user.email);
     next();
   } catch (error) {
     if (error.name === 'JsonWebTokenError') {
