@@ -335,7 +335,8 @@ router.get('/google/callback',
       console.log('🔄 Full redirect URL:', redirectUrl);
       console.log('🔄 JWT token length:', token.length);
       
-      // Use a more explicit redirect that should preserve query params
+      // Use a simple redirect with detailed logging
+      console.log('🔄 About to redirect to:', redirectUrl);
       res.redirect(302, redirectUrl);
     } catch (e) {
       console.error('❌ JWT generation error:', e.message);
@@ -353,6 +354,15 @@ router.get('/debug', (req, res) => {
     GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL,
     currentUrl: req.protocol + '://' + req.get('host') + req.originalUrl
   });
+});
+
+// Test endpoint to verify JWT handling
+router.get('/test-redirect', (req, res) => {
+  const testJwt = 'test-jwt-token-12345';
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+  const redirectUrl = `${frontendUrl}/dashboard?jwt=${encodeURIComponent(testJwt)}`;
+  console.log('🧪 Test redirect URL:', redirectUrl);
+  res.redirect(302, redirectUrl);
 });
 
 // Get current session user
