@@ -3,11 +3,9 @@ import React from 'react';
 const GoogleAuth = ({ onSuccess, onError }) => {
   const handleGoogleLogin = () => {
     try {
-      // Use environment variable or fallback to production backend
-      const apiUrl = 'https://memorify-backend-ik4b.onrender.com';
-      const redirectUrl = `${apiUrl}/api/auth/google`;
+      // Use Vercel API proxy to avoid Chrome security issues
+      const redirectUrl = '/api/auth/google';
       
-      console.log('🔐 Google OAuth - API URL:', apiUrl);
       console.log('🔐 Google OAuth - Redirect URL:', redirectUrl);
       console.log('🔐 Google OAuth - Environment:', process.env.NODE_ENV);
       
