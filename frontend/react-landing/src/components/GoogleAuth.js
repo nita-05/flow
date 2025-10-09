@@ -4,7 +4,7 @@ const GoogleAuth = ({ onSuccess, onError }) => {
   const handleGoogleLogin = () => {
     try {
       // Redirect to backend Google OAuth endpoint
-      window.location.href = `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/auth/google`;
+      window.location.href = `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/auth/google`;
     } catch (error) {
       console.error('Google login error:', error);
       if (onError) onError(error.message);
