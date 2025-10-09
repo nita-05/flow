@@ -798,9 +798,9 @@ const Dashboard = () => {
               </div>
               <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">Memorify Studio</h1>
             </div>
-            <div className="flex items-center space-x-2 sm:space-x-4">
+            <div className="flex items-center space-x-1 sm:space-x-4 min-w-0">
               {/* User Profile Section */}
-              <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="flex items-center space-x-1 sm:space-x-3 min-w-0 flex-1">
                 {(() => {
                   const src = user.avatar || user.picture || user.imageUrl;
                   if (src) {
@@ -809,7 +809,7 @@ const Dashboard = () => {
                         src={src.startsWith('http') ? src : `https:${src}`}
                         alt={user.name}
                         referrerPolicy="no-referrer"
-                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-gray-200 shadow-lg"
+                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-gray-200 shadow-lg flex-shrink-0"
                         onError={(e) => {
                           console.log('Image failed to load:', e.target.src);
                           const currentSrc = e.target.src;
@@ -821,7 +821,7 @@ const Dashboard = () => {
                             // Fallback to initials badge
                             e.target.replaceWith(
                               Object.assign(document.createElement('div'), {
-                                className: 'w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-gray-200 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-lg',
+                                className: 'w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-gray-200 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-lg flex-shrink-0',
                                 innerText: (user.name || '?').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase()
                               })
                             );
@@ -832,16 +832,16 @@ const Dashboard = () => {
                   }
                   // No image: show initials directly
                   return (
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-gray-200 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-lg">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-gray-200 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-lg flex-shrink-0">
                       {(user.name || '?').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase()}
                     </div>
                   );
                 })()}
-                <div className="flex flex-col">
-                  <span className="text-gray-700 text-xs sm:text-sm">Welcome, {user.name}</span>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-gray-700 text-xs sm:text-sm truncate">Welcome, {user.name}</span>
                 </div>
               </div>
-              <button onClick={logout} className="px-3 sm:px-6 py-2 sm:py-3 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-all duration-300 text-xs sm:text-sm">
+              <button onClick={logout} className="px-2 sm:px-6 py-2 sm:py-3 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-all duration-300 text-xs sm:text-sm flex-shrink-0">
                 Logout
               </button>
             </div>
