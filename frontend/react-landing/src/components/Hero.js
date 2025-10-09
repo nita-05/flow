@@ -41,7 +41,7 @@ const Hero = ({ onGetStarted }) => {
             
             <button 
               onClick={() => {
-                alert("🔐 Please login first to watch the demo!");
+                alert("🎬 To watch the demo, please login first!\n\nClick 'Start Your Journey' to get started and access all features including the demo video.");
               }}
               className="w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-6 bg-white/80 backdrop-blur-lg text-gray-800 font-semibold text-lg sm:text-xl rounded-2xl border border-purple-300 hover:bg-white transition-all duration-300 shadow-lg cursor-pointer"
             >
