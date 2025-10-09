@@ -83,7 +83,7 @@ const Portfolio = ({ onGetStarted }) => {
                       </div>
                       
                       {/* Demo Flow Section - Inside Demo Container */}
-                      <div className="mt-6 sm:mt-8">
+                      <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-purple-200/50">
                         <div className="text-center mb-4 sm:mb-6">
                           <h5 className="text-sm sm:text-base font-semibold text-gray-700 mb-3 sm:mb-4">Demo Flow:</h5>
                         </div>
