@@ -42,11 +42,11 @@ const Portfolio = ({ onGetStarted }) => {
         </div>
 
         {/* Enhanced Demo Section */}
-        <div className="bg-gradient-to-br from-purple-100/90 via-blue-100/80 to-indigo-100/90 backdrop-blur-lg rounded-3xl p-12 mb-16 max-w-7xl mx-auto shadow-2xl border border-purple-300/50">
-          <div className="space-y-12">
+        <div className="bg-gradient-to-br from-purple-100/90 via-blue-100/80 to-indigo-100/90 backdrop-blur-lg rounded-3xl p-4 sm:p-8 lg:p-12 mb-16 max-w-7xl mx-auto shadow-2xl border border-purple-300/50">
+          <div className="space-y-8 sm:space-y-12">
             {/* Demo Video Section */}
             <div className="text-center">
-              <div className="inline-block">
+              <div className="inline-block w-full max-w-2xl">
                 <div className="bg-gradient-to-br from-purple-100/90 via-blue-100/80 to-indigo-100/90 rounded-3xl shadow-2xl overflow-hidden border border-purple-300/50">
                   {/* Browser Header */}
                   <div className="bg-gradient-to-r from-gray-100 to-gray-200 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
@@ -64,26 +64,26 @@ const Portfolio = ({ onGetStarted }) => {
                   </div>
                   
                   {/* Demo Content */}
-                  <div className="p-8 bg-gradient-to-br from-purple-50 to-blue-50">
-                    <div className="text-center space-y-6">
-                      <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                        <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <div className="p-4 sm:p-8 bg-gradient-to-br from-purple-50 to-blue-50">
+                    <div className="text-center space-y-4 sm:space-y-6">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-purple-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                        <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
                           <rect x="4" y="6" width="10" height="9" rx="2" />
                           <path d="M16 8l5 2.8L16 13.6V8z" />
                         </svg>
                       </div>
-                      <div>
-                        <h4 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">Watch Memorify in Action</h4>
-                        <p className="text-gray-600">Experience the power of AI-driven video search and story generation</p>
+                      <div className="text-center">
+                        <h4 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2 text-center">Watch Memorify in Action</h4>
+                        <p className="text-sm sm:text-base text-gray-600 text-center px-2">Experience the power of AI-driven video search and story generation</p>
                       </div>
-                      <div className="bg-gradient-to-br from-purple-100/90 via-blue-100/80 to-indigo-100/90 rounded-xl p-4 shadow-sm border border-purple-300/50">
-                        <div className="text-sm text-gray-500 mb-2">Demo Flow:</div>
-                        <div className="flex items-center justify-center space-x-4 text-sm font-medium text-gray-700">
-                          <span className="bg-purple-100 px-3 py-1 rounded-full">Upload</span>
+                      <div className="bg-gradient-to-br from-purple-100/90 via-blue-100/80 to-indigo-100/90 rounded-xl p-3 sm:p-4 shadow-sm border border-purple-300/50 text-center">
+                        <div className="text-xs sm:text-sm text-gray-500 mb-2 text-center">Demo Flow:</div>
+                        <div className="flex items-center justify-center space-x-2 sm:space-x-4 text-xs sm:text-sm font-medium text-gray-700 flex-wrap">
+                          <span className="bg-purple-100 px-2 sm:px-3 py-1 rounded-full">Upload</span>
                           <span className="text-gray-400">→</span>
-                          <span className="bg-blue-100 px-3 py-1 rounded-full">Search</span>
+                          <span className="bg-blue-100 px-2 sm:px-3 py-1 rounded-full">Search</span>
                           <span className="text-gray-400">→</span>
-                          <span className="bg-green-100 px-3 py-1 rounded-full">Generate</span>
+                          <span className="bg-green-100 px-2 sm:px-3 py-1 rounded-full">Generate</span>
                         </div>
                       </div>
                     </div>
