@@ -4,7 +4,8 @@ const GoogleAuth = ({ onSuccess, onError }) => {
   const handleGoogleLogin = () => {
     try {
       // Redirect to backend Google OAuth endpoint
-      window.location.href = `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/auth/google`;
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://memorify-studio-backend.onrender.com';
+      window.location.href = `${apiUrl}/api/auth/google`;
     } catch (error) {
       console.error('Google login error:', error);
       if (onError) onError(error.message);
