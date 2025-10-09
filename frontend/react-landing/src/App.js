@@ -12,6 +12,7 @@ import Footer from './components/Footer';
 import LoginModal from './components/LoginModal';
 import Dashboard from './components/Dashboard';
 import { useScrollAnimation } from './hooks/useScrollAnimation';
+import authService from './services/authService';
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,12 +36,9 @@ function App() {
       const jwt = params.get('jwt');
       if (jwt) {
         console.log('JWT token received from OAuth:', jwt.substring(0, 20) + '...');
-        localStorage.setItem('token', jwt);
-        // Import authService and set the token properly
-        import('./services/authService').then(({ default: authService }) => {
-          authService.setToken(jwt);
-          console.log('Token set in authService');
-        });
+        // Set token in authService singleton
+        authService.setToken(jwt);
+        console.log('Token set in authService singleton');
         // Clear the URL parameters and navigate to dashboard
         window.history.replaceState({}, '', '/dashboard');
         setCurrentPage('dashboard');
@@ -55,7 +53,15 @@ function App() {
       console.log('Checking route:', path);
       if (path === '/dashboard') {
         console.log('Setting page to dashboard');
-        setCurrentPage('dashboard');
+        // Check if we have a token before going to dashboard
+        const token = authService.getToken();
+        if (token) {
+          console.log('Token found, going to dashboard');
+          setCurrentPage('dashboard');
+        } else {
+          console.log('No token found, staying on home');
+          setCurrentPage('home');
+        }
       } else {
         console.log('Setting page to home');
         setCurrentPage('home');

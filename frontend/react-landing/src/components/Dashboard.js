@@ -81,6 +81,21 @@ const Dashboard = () => {
           await loadUserData();
           setIsLoading(false);
         } else {
+          console.log('No authentication found, checking if we have a token in URL...');
+          // Check if there's a JWT in the URL that we missed
+          const params = new URLSearchParams(window.location.search);
+          const jwt = params.get('jwt');
+          if (jwt) {
+            console.log('Found JWT in URL, setting token and retrying auth...');
+            authService.setToken(jwt);
+            // Clear URL and retry authentication
+            window.history.replaceState({}, '', '/dashboard');
+            // Retry authentication
+            setTimeout(() => {
+              checkAuth();
+            }, 100);
+            return;
+          }
           console.log('No authentication found, redirecting to home');
           setIsLoading(false);
           window.history.pushState({}, '', '/');
