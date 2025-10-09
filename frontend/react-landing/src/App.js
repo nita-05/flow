@@ -5,7 +5,6 @@ import './App.css';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
-import Description from './components/Description';
 import Portfolio from './components/Portfolio';
 import Careers from './components/Careers';
 import Footer from './components/Footer';
@@ -204,7 +203,6 @@ function App() {
       />
       <Hero onGetStarted={openModal} />
       <About />
-      <Description />
       <Portfolio onGetStarted={openModal} />
       <Careers onGetStarted={openModal} />
       <Footer />
