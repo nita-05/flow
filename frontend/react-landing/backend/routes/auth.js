@@ -276,7 +276,7 @@ router.get('/verify', authenticateToken, (req, res) => {
 
 // Google OAuth Routes
 router.get('/google', passport.authenticate('google', {
-  scope: ['openid', 'email', 'profile', 'https://www.googleapis.com/auth/photoslibrary.readonly'],
+  scope: ['openid', 'email', 'profile'],
   accessType: 'offline',
   prompt: 'consent'
 }));
