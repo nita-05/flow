@@ -37,6 +37,9 @@ const metricsRoutes = require('./routes/metrics');
 
 const app = express();
 
+// Trust proxy for production (Render uses proxies)
+app.set('trust proxy', 1);
+
 // CORS must be first so preflight gets proper headers
 const corsOptions = {
   origin: function (origin, callback) {
@@ -48,18 +51,25 @@ const corsOptions = {
       'http://localhost:3001',
       process.env.CORS_ORIGIN,
       process.env.FRONTEND_URL,
-      'https://flow-kawsg6lis-nita-barikis-projects.vercel.app', // NEW Vercel URL
-      'https://flow-ten-ivory.vercel.app', // Primary domain
-      'https://flow-git-main-nita-barikis-projects.vercel.app', // Git branch domain
-      'https://flow-jz5x64n7r-nita-barikis-projects.vercel.app', // Previous Vercel URL
-      'https://flow-qahqmc61w-nita-barikis-projects.vercel.app', // Previous Vercel URL
-      'https://flow-mnifvdz3z-nita-barikis-projects.vercel.app',  // Another Vercel URL
-      // Add your production domain here
-      'https://yourdomain.com',
-      'https://www.yourdomain.com'
+      'https://memorify-nine.vercel.app', // Primary Vercel domain
+      'https://memorify-4wulsejvy-nita-barikis-projects.vercel.app', // Vercel deployment URL
+      'https://memorify-8k9fsxbtn-nita-barikis-projects.vercel.app', // Another Vercel URL
+      'https://memorify-35b79t6kf-nita-barikis-projects.vercel.app', // Another Vercel URL
+      // Allow all Vercel preview URLs
+      /^https:\/\/memorify-.*\.vercel\.app$/
     ].filter(Boolean);
     
-    if (allowedOrigins.includes(origin)) {
+    // Check if origin matches any allowed origin (including regex patterns)
+    const isAllowed = allowedOrigins.some(allowedOrigin => {
+      if (typeof allowedOrigin === 'string') {
+        return allowedOrigin === origin;
+      } else if (allowedOrigin instanceof RegExp) {
+        return allowedOrigin.test(origin);
+      }
+      return false;
+    });
+
+    if (isAllowed) {
       callback(null, true);
     } else {
       console.log('CORS blocked origin:', origin);
