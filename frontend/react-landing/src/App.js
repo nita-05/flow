@@ -4,9 +4,7 @@ import './App.css';
 // Components
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import About from './components/About';
 import Description from './components/Description';
-import Portfolio from './components/Portfolio';
 import Careers from './components/Careers';
 import Footer from './components/Footer';
 import LoginModal from './components/LoginModal';
@@ -203,9 +201,7 @@ function App() {
         onNavigateToFeatures={navigateToFeatures}
       />
       <Hero onGetStarted={openModal} />
-      <About />
       <Description />
-      <Portfolio onGetStarted={openModal} />
       <Careers onGetStarted={openModal} />
       <Footer />
       <LoginModal isOpen={isModalOpen} onClose={closeModal} onNavigateToDashboard={navigateToDashboard} />
