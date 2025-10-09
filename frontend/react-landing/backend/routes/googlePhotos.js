@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const googlePhotosService = require('../services/googlePhotosService');
-const auth = require('../middleware/auth');
+const { authenticateToken } = require('../middleware/auth');
 const File = require('../models/File');
 const aiService = require('../services/aiService');
 
@@ -9,7 +9,7 @@ const aiService = require('../services/aiService');
  * GET /api/google-photos/auth
  * Initiate Google Photos OAuth flow
  */
-router.get('/auth', auth, async (req, res) => {
+router.get('/auth', authenticateToken, async (req, res) => {
   try {
     const state = req.user._id.toString(); // Use user ID as state
     const authUrl = googlePhotosService.getAuthUrl(state);
@@ -31,7 +31,7 @@ router.get('/auth', auth, async (req, res) => {
  * GET /api/google-photos/callback
  * Handle Google Photos OAuth callback
  */
-router.get('/callback', auth, async (req, res) => {
+router.get('/callback', authenticateToken, async (req, res) => {
   try {
     const { code, state } = req.query;
 
@@ -74,7 +74,7 @@ router.get('/callback', auth, async (req, res) => {
  * GET /api/google-photos/media
  * Get user's Google Photos media items
  */
-router.get('/media', auth, async (req, res) => {
+router.get('/media', authenticateToken, async (req, res) => {
   try {
     if (!req.user.googlePhotosTokens) {
       return res.status(401).json({
@@ -117,7 +117,7 @@ router.get('/media', auth, async (req, res) => {
  * POST /api/google-photos/import
  * Import selected media items from Google Photos
  */
-router.post('/import', auth, async (req, res) => {
+router.post('/import', authenticateToken, async (req, res) => {
   try {
     if (!req.user.googlePhotosTokens) {
       return res.status(401).json({
@@ -210,7 +210,7 @@ router.post('/import', auth, async (req, res) => {
  * POST /api/google-photos/disconnect
  * Disconnect Google Photos integration
  */
-router.post('/disconnect', auth, async (req, res) => {
+router.post('/disconnect', authenticateToken, async (req, res) => {
   try {
     req.user.googlePhotosTokens = undefined;
     await req.user.save();
@@ -232,7 +232,7 @@ router.post('/disconnect', auth, async (req, res) => {
  * GET /api/google-photos/status
  * Check Google Photos connection status
  */
-router.get('/status', auth, (req, res) => {
+router.get('/status', authenticateToken, (req, res) => {
   try {
     const isConnected = !!req.user.googlePhotosTokens;
     
