@@ -1,7 +1,7 @@
 # 🔐 Google Console Production Setup Guide
 
 ## 📋 Your Production URLs
-- **Frontend:** https://flow-jz5x64n7r-nita-barikis-projects.vercel.app
+- **Frontend:** https://flow-ikutex6s6-nita-barikis-projects.vercel.app (Latest)
 - **Backend:** https://memorify-studio-backend.onrender.com
 
 ## 🔧 Step-by-Step Google Console Configuration
@@ -19,9 +19,11 @@
 #### **Authorized JavaScript Origins**
 Add these URLs:
 ```
+https://flow-ikutex6s6-nita-barikis-projects.vercel.app
+https://flow-ten-ivory.vercel.app
+https://flow-git-main-nita-barikis-projects.vercel.app
 https://flow-jz5x64n7r-nita-barikis-projects.vercel.app
 https://flow-mnifvdz3z-nita-barikis-projects.vercel.app
-https://flow-qahqmc61w-nita-barikis-projects.vercel.app
 http://localhost:3000
 ```
 
@@ -38,17 +40,17 @@ http://localhost:5000/api/auth/google/callback
 
 #### **Application Homepage**
 ```
-https://flow-jz5x64n7r-nita-barikis-projects.vercel.app
+https://flow-ikutex6s6-nita-barikis-projects.vercel.app
 ```
 
 #### **Application Privacy Policy Link**
 ```
-https://flow-jz5x64n7r-nita-barikis-projects.vercel.app/privacy
+https://flow-ikutex6s6-nita-barikis-projects.vercel.app/privacy
 ```
 
 #### **Application Terms of Service Link**
 ```
-https://flow-jz5x64n7r-nita-barikis-projects.vercel.app/terms
+https://flow-ikutex6s6-nita-barikis-projects.vercel.app/terms
 ```
 
 #### **Authorized Domains**
