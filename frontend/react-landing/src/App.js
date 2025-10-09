@@ -11,6 +11,8 @@ import Careers from './components/Careers';
 import Footer from './components/Footer';
 import LoginModal from './components/LoginModal';
 import Dashboard from './components/Dashboard';
+import HowItWorks from './components/HowItWorks';
+import Features from './components/Features';
 import { useScrollAnimation } from './hooks/useScrollAnimation';
 import authService from './services/authService';
 
@@ -28,6 +30,18 @@ function App() {
   const navigateToDashboard = () => {
     setCurrentPage('dashboard');
     window.history.pushState({}, '', '/dashboard');
+  };
+
+  // Function to navigate to How It Works page
+  const navigateToHowItWorks = () => {
+    setCurrentPage('how-it-works');
+    window.history.pushState({}, '', '/how-it-works');
+  };
+
+  // Function to navigate to Features page
+  const navigateToFeatures = () => {
+    setCurrentPage('features');
+    window.history.pushState({}, '', '/features');
   };
 
 
@@ -116,8 +130,14 @@ function App() {
           setCurrentPage('home');
           window.history.pushState({}, '', '/');
         }
+      } else if (path === '/how-it-works') {
+        console.log('🔍 How It Works route detected');
+        setCurrentPage('how-it-works');
+      } else if (path === '/features') {
+        console.log('🔍 Features route detected');
+        setCurrentPage('features');
       } else {
-        console.log('🔍 Non-dashboard route, setting to home');
+        console.log('🔍 Home route detected');
         setCurrentPage('home');
       }
     };
@@ -142,7 +162,13 @@ function App() {
       if (currentPath === '/dashboard' && currentPage !== 'dashboard') {
         console.log('Route change detected via interval, switching to dashboard');
         setCurrentPage('dashboard');
-      } else if (currentPath !== '/dashboard' && currentPage !== 'home') {
+      } else if (currentPath === '/how-it-works' && currentPage !== 'how-it-works') {
+        console.log('Route change detected via interval, switching to how-it-works');
+        setCurrentPage('how-it-works');
+      } else if (currentPath === '/features' && currentPage !== 'features') {
+        console.log('Route change detected via interval, switching to features');
+        setCurrentPage('features');
+      } else if (currentPath === '/' && currentPage !== 'home') {
         console.log('Route change detected via interval, switching to home');
         setCurrentPage('home');
       }
@@ -161,9 +187,21 @@ function App() {
     return <Dashboard />;
   }
 
+  if (currentPage === 'how-it-works') {
+    return <HowItWorks onGetStarted={openModal} />;
+  }
+
+  if (currentPage === 'features') {
+    return <Features onGetStarted={openModal} />;
+  }
+
   return (
     <div className="App">
-      <Navbar onGetStarted={openModal} />
+      <Navbar 
+        onGetStarted={openModal} 
+        onNavigateToHowItWorks={navigateToHowItWorks}
+        onNavigateToFeatures={navigateToFeatures}
+      />
       <Hero onGetStarted={openModal} />
       <About />
       <Description />
