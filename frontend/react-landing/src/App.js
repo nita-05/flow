@@ -29,6 +29,16 @@ function App() {
     window.history.pushState({}, '', '/dashboard');
   };
 
+  // Test function to simulate JWT handling
+  const testJWT = () => {
+    console.log('🧪 Testing JWT handling...');
+    const testToken = 'test-jwt-token-12345';
+    authService.setToken(testToken);
+    console.log('🧪 Test token set:', authService.getToken());
+    setCurrentPage('dashboard');
+    window.history.pushState({}, '', '/dashboard');
+  };
+
   useEffect(() => {
     // Capture JWT from OAuth redirect and store
     try {
@@ -67,11 +77,16 @@ function App() {
         const existingToken = authService.getToken();
         if (existingToken) {
           console.log('ℹ️ Found existing token in localStorage, checking validity...');
+          console.log('ℹ️ Existing token:', existingToken.substring(0, 20) + '...');
           // If we're on dashboard route and have a token, go to dashboard
           if (window.location.pathname === '/dashboard') {
             console.log('✅ On dashboard route with existing token, going to dashboard');
             setCurrentPage('dashboard');
+          } else {
+            console.log('ℹ️ Not on dashboard route, staying on home');
           }
+        } else {
+          console.log('ℹ️ No existing token found');
         }
       }
     } catch (error) {
@@ -148,6 +163,25 @@ function App() {
       <Careers onGetStarted={openModal} />
       <Footer />
       <LoginModal isOpen={isModalOpen} onClose={closeModal} onNavigateToDashboard={navigateToDashboard} />
+      
+      {/* Temporary test button */}
+      <button 
+        onClick={testJWT}
+        style={{
+          position: 'fixed',
+          top: '10px',
+          right: '10px',
+          zIndex: 9999,
+          background: 'red',
+          color: 'white',
+          padding: '10px',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer'
+        }}
+      >
+        Test JWT
+      </button>
     </div>
   );
 }
