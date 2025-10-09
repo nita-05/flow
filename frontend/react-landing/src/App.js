@@ -30,19 +30,6 @@ function App() {
     window.history.pushState({}, '', '/dashboard');
   };
 
-  // Test function to simulate JWT handling
-  const testJWT = () => {
-    console.log('🧪 Testing JWT handling...');
-    const testToken = 'test-jwt-token-12345';
-    authService.setToken(testToken);
-    console.log('🧪 Test token set:', authService.getToken());
-    console.log('🧪 Navigating to dashboard...');
-    setIsNavigating(true);
-    // First change the URL, then set the page state
-    window.history.pushState({}, '', '/dashboard');
-    setCurrentPage('dashboard');
-    console.log('🧪 Page state set to dashboard');
-  };
 
   useEffect(() => {
     // Check if we're already on dashboard route
@@ -184,25 +171,6 @@ function App() {
       <Careers onGetStarted={openModal} />
       <Footer />
       <LoginModal isOpen={isModalOpen} onClose={closeModal} onNavigateToDashboard={navigateToDashboard} />
-      
-      {/* Temporary test button */}
-      <button 
-        onClick={testJWT}
-        style={{
-          position: 'fixed',
-          top: '10px',
-          right: '10px',
-          zIndex: 9999,
-          background: 'red',
-          color: 'white',
-          padding: '10px',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer'
-        }}
-      >
-        Test JWT
-      </button>
     </div>
   );
 }
