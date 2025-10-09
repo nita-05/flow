@@ -1239,30 +1239,32 @@ const Dashboard = () => {
               <p className="text-lg text-gray-600">Search by meaning, emotions, or concepts - not just keywords</p>
             </div>
 
-            <div className="bg-white rounded-2xl p-8 border border-gray-200">
-              <div className="flex space-x-4">
+            <div className="bg-white rounded-2xl p-4 sm:p-8 border border-gray-200">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                   placeholder="e.g., 'show me all the times I was happy' or 'find my beach memories'"
-                  className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                 />
-                <button onClick={handleSearch} className="btn-primary">
-                  Search
-                </button>
-                {searchQuery && (
-                  <button 
-                    onClick={() => {
-                      setSearchQuery('');
-                      setSearchResults([]);
-                    }}
-                    className="btn-secondary"
-                  >
-                    Clear
+                <div className="flex gap-2 sm:gap-4">
+                  <button onClick={handleSearch} className="btn-primary px-4 sm:px-6 py-3 text-sm sm:text-base whitespace-nowrap">
+                    Search
                   </button>
-                )}
+                  {searchQuery && (
+                    <button 
+                      onClick={() => {
+                        setSearchQuery('');
+                        setSearchResults([]);
+                      }}
+                      className="btn-secondary px-4 sm:px-6 py-3 text-sm sm:text-base whitespace-nowrap"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
