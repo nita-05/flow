@@ -34,42 +34,54 @@ function App() {
     try {
       const params = new URLSearchParams(window.location.search);
       const jwt = params.get('jwt');
+      console.log('🔍 Checking for JWT in URL:', window.location.href);
+      console.log('🔍 JWT found:', jwt ? 'Yes' : 'No');
+      
       if (jwt) {
-        console.log('JWT token received from OAuth:', jwt.substring(0, 20) + '...');
+        console.log('✅ JWT token received from OAuth:', jwt.substring(0, 20) + '...');
         // Set token in authService singleton
         authService.setToken(jwt);
-        console.log('Token set in authService singleton');
+        console.log('✅ Token set in authService singleton');
+        console.log('✅ Current token in authService:', authService.getToken() ? 'Present' : 'Missing');
         // Clear the URL parameters and navigate to dashboard
         window.history.replaceState({}, '', '/dashboard');
+        console.log('✅ Navigating to dashboard');
         setCurrentPage('dashboard');
+      } else {
+        console.log('ℹ️ No JWT found in URL');
       }
     } catch (error) {
-      console.error('Error handling JWT:', error);
+      console.error('❌ Error handling JWT:', error);
     }
 
     // Check current route and update state
     const checkRoute = () => {
       const path = window.location.pathname.replace(/\/$/, '');
-      console.log('Checking route:', path);
+      console.log('🔍 Checking route:', path);
+      console.log('🔍 Current page state:', currentPage);
+      
       if (path === '/dashboard') {
-        console.log('Setting page to dashboard');
+        console.log('🔍 Dashboard route detected');
         // Check if we have a token before going to dashboard
         const token = authService.getToken();
+        console.log('🔍 Token check:', token ? 'Present' : 'Missing');
         if (token) {
-          console.log('Token found, going to dashboard');
+          console.log('✅ Token found, going to dashboard');
           setCurrentPage('dashboard');
         } else {
-          console.log('No token found, staying on home');
+          console.log('❌ No token found, staying on home');
           setCurrentPage('home');
         }
       } else {
-        console.log('Setting page to home');
+        console.log('🔍 Non-dashboard route, setting to home');
         setCurrentPage('home');
       }
     };
 
-    // Check route on mount
-    checkRoute();
+    // Check route on mount (but only if no JWT processing happened)
+    if (!window.location.search.includes('jwt=')) {
+      checkRoute();
+    }
 
     // Listen for URL changes (for browser back/forward)
     const handlePopState = () => {
