@@ -3,10 +3,14 @@ import React from 'react';
 const GoogleAuth = ({ onSuccess, onError }) => {
   const handleGoogleLogin = () => {
     try {
-      // EMERGENCY FIX: Hardcode the URL to bypass all environment variable issues
-      const redirectUrl = 'https://memorify-studio-backend.onrender.com/api/auth/google';
-      console.log('🚨 EMERGENCY FIX - Hardcoded redirect to:', redirectUrl);
-      console.log('🚨 EMERGENCY FIX - REACT_APP_API_URL was:', process.env.REACT_APP_API_URL);
+      // Use environment variable or fallback to production backend
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://memorify-studio-backend.onrender.com';
+      const redirectUrl = `${apiUrl}/api/auth/google`;
+      
+      console.log('🔐 Google OAuth - API URL:', apiUrl);
+      console.log('🔐 Google OAuth - Redirect URL:', redirectUrl);
+      console.log('🔐 Google OAuth - Environment:', process.env.NODE_ENV);
+      
       window.location.href = redirectUrl;
     } catch (error) {
       console.error('Google login error:', error);

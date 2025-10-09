@@ -145,6 +145,17 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// OAuth test endpoint
+app.get('/api/test-oauth', (req, res) => {
+  res.json({
+    message: 'OAuth test endpoint working',
+    googleAuthUrl: `${req.protocol}://${req.get('host')}/api/auth/google`,
+    callbackUrl: `${req.protocol}://${req.get('host')}/api/auth/google/callback`,
+    frontendUrl: process.env.FRONTEND_URL,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Root endpoint to redirect to frontend
 app.get('/', (req, res) => {
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';

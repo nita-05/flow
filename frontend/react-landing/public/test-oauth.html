@@ -19,30 +19,40 @@
     <div id="debug" style="margin-top: 20px; padding: 10px; background: #f5f5f5; border-radius: 5px;"></div>
     
     <script>
-        function testOAuth() {
+        async function testOAuth() {
             const apiUrl = 'https://memorify-studio-backend.onrender.com';
-            const redirectUrl = `${apiUrl}/api/auth/google`;
             
-            console.log('🔍 EMERGENCY TEST - Redirecting to:', redirectUrl);
-            
-            // Show debug info
-            document.getElementById('debug').innerHTML = `
-                <strong>Debug Info:</strong><br>
-                API URL: ${apiUrl}<br>
-                Redirect URL: ${redirectUrl}<br>
-                <br><strong>Redirecting now...</strong>
-            `;
-            
-            // Redirect immediately
-            window.location.href = redirectUrl;
+            // First test the OAuth endpoint
+            try {
+                console.log('🔍 Testing OAuth endpoint...');
+                const response = await fetch(`${apiUrl}/api/test-oauth`);
+                const data = await response.json();
+                
+                document.getElementById('debug').innerHTML = `
+                    <strong>✅ Backend Test Successful:</strong><br>
+                    ${JSON.stringify(data, null, 2)}<br>
+                    <br><strong>🚀 Redirecting to OAuth...</strong>
+                `;
+                
+                // Redirect to OAuth
+                window.location.href = `${apiUrl}/api/auth/google`;
+                
+            } catch (error) {
+                document.getElementById('debug').innerHTML = `
+                    <strong>❌ Backend Test Failed:</strong><br>
+                    Error: ${error.message}<br>
+                    <br>Backend might be down or CORS blocked.
+                `;
+                console.error('Backend test failed:', error);
+            }
         }
         
-        // Show current environment info
+        // Show initial info
         document.getElementById('debug').innerHTML = `
-            <strong>Current Environment:</strong><br>
-            REACT_APP_API_URL: ${process?.env?.REACT_APP_API_URL || 'undefined'}<br>
+            <strong>OAuth Test Page:</strong><br>
+            Backend: https://memorify-studio-backend.onrender.com<br>
             Current URL: ${window.location.href}<br>
-            <br>Click the button above to test OAuth.
+            <br>Click the button above to test OAuth flow.
         `;
     </script>
 </body>
