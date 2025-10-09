@@ -45,6 +45,17 @@ function App() {
   };
 
   useEffect(() => {
+    // Check if we're already on dashboard route
+    if (window.location.pathname === '/dashboard') {
+      console.log('🔍 Already on dashboard route, checking for token...');
+      const token = authService.getToken();
+      if (token) {
+        console.log('✅ Token found, going to dashboard');
+        setCurrentPage('dashboard');
+        return;
+      }
+    }
+    
     // Capture JWT from OAuth redirect and store
     try {
       console.log('🔍 Full URL:', window.location.href);
@@ -125,7 +136,10 @@ function App() {
 
     // Check route on mount (but only if no JWT processing happened and not navigating)
     if (!window.location.search.includes('jwt=') && !isNavigating) {
-      checkRoute();
+      // Small delay to ensure state is properly set
+      setTimeout(() => {
+        checkRoute();
+      }, 100);
     }
 
     // Listen for URL changes (for browser back/forward)
