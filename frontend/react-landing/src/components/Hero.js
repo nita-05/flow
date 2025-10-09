@@ -39,7 +39,12 @@ const Hero = ({ onGetStarted }) => {
               <div className="absolute inset-0 bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             </button>
             
-            <button className="w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-6 bg-white/80 backdrop-blur-lg text-gray-800 font-semibold text-lg sm:text-xl rounded-2xl border border-purple-300 hover:bg-white transition-all duration-300 shadow-lg">
+            <button 
+              onClick={() => {
+                alert("🔐 Please login first to watch the demo!");
+              }}
+              className="w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-6 bg-white/80 backdrop-blur-lg text-gray-800 font-semibold text-lg sm:text-xl rounded-2xl border border-purple-300 hover:bg-white transition-all duration-300 shadow-lg cursor-pointer"
+            >
               Watch Demo
             </button>
           </div>
