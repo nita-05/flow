@@ -6,6 +6,7 @@ const router = express.Router();
 
 // GET /api/metrics/summary
 router.get('/summary', async (req, res) => {
+  console.log('📊 Metrics summary endpoint called');
   try {
     const [totalStories, totalAnalyzedFiles, viewsAgg] = await Promise.all([
       Story.countDocuments({}),
@@ -29,7 +30,8 @@ router.get('/summary', async (req, res) => {
       userSatisfaction
     });
   } catch (error) {
-    console.error('Metrics summary error:', error);
+    console.error('❌ Metrics summary error:', error);
+    console.error('❌ Error stack:', error.stack);
     res.status(500).json({
       message: 'Failed to get metrics summary',
       error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
