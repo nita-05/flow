@@ -838,8 +838,7 @@ const Dashboard = () => {
                   );
                 })()}
                 <div className="flex flex-col">
-                  <span className="text-gray-700 text-xs sm:text-sm hidden sm:block">Welcome, {user.name}</span>
-                  <span className="text-gray-700 text-xs sm:hidden">Welcome</span>
+                  <span className="text-gray-700 text-xs sm:text-sm">Welcome, {user.name}</span>
                 </div>
               </div>
               <button onClick={logout} className="px-3 sm:px-6 py-2 sm:py-3 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-all duration-300 text-xs sm:text-sm">
