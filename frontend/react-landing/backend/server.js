@@ -47,7 +47,10 @@ const corsOptions = {
       'http://localhost:3001',
       process.env.CORS_ORIGIN,
       process.env.FRONTEND_URL,
-      'https://flow-jz5x64n7r-nita-barikis-projects.vercel.app', // Current Vercel URL
+      'https://flow-kawsg6lis-nita-barikis-projects.vercel.app', // NEW Vercel URL
+      'https://flow-ten-ivory.vercel.app', // Primary domain
+      'https://flow-git-main-nita-barikis-projects.vercel.app', // Git branch domain
+      'https://flow-jz5x64n7r-nita-barikis-projects.vercel.app', // Previous Vercel URL
       'https://flow-qahqmc61w-nita-barikis-projects.vercel.app', // Previous Vercel URL
       'https://flow-mnifvdz3z-nita-barikis-projects.vercel.app'  // Another Vercel URL
     ].filter(Boolean);
@@ -140,6 +143,12 @@ app.get('/api/health', (req, res) => {
     message: 'Best of Us API is running',
     timestamp: new Date().toISOString()
   });
+});
+
+// Root endpoint to redirect to frontend
+app.get('/', (req, res) => {
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+  res.redirect(frontendUrl);
 });
 
 // Error handling middleware
