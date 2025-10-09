@@ -65,7 +65,7 @@ const Portfolio = ({ onGetStarted }) => {
                   
                   {/* Demo Content */}
                   <div className="p-4 sm:p-8 bg-gradient-to-br from-purple-50 to-blue-50">
-                    <div className="text-center space-y-4 sm:space-y-6">
+                    <div className="text-center space-y-6 sm:space-y-8">
                       <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-purple-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
                         <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
                           <rect x="4" y="6" width="10" height="9" rx="2" />
@@ -76,6 +76,60 @@ const Portfolio = ({ onGetStarted }) => {
                         <h4 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2 text-center">Watch Memorify in Action</h4>
                         <p className="text-sm sm:text-base text-gray-600 text-center px-2">Experience the power of AI-driven video search and story generation</p>
                       </div>
+                      
+                      {/* Demo Flow Section - Inside Demo Container */}
+                      <div className="mt-6 sm:mt-8">
+                        <div className="text-center mb-4 sm:mb-6">
+                          <h5 className="text-sm sm:text-base font-semibold text-gray-700 mb-3 sm:mb-4">Demo Flow:</h5>
+                        </div>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
+                          {/* Upload Step */}
+                          <div className="flex items-center">
+                            <button 
+                              onClick={() => {
+                                alert("🔐 Please login first to upload your videos!");
+                              }}
+                              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold text-sm sm:text-base shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+                            >
+                              Upload
+                            </button>
+                            <div className="hidden sm:block ml-3 sm:ml-4">
+                              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </div>
+                          </div>
+                          
+                          {/* Search Step */}
+                          <div className="flex items-center">
+                            <button 
+                              onClick={() => {
+                                alert("🔐 Please login first to search your memories!");
+                              }}
+                              className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold text-sm sm:text-base shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+                            >
+                              Search
+                            </button>
+                            <div className="hidden sm:block ml-3 sm:ml-4">
+                              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </div>
+                          </div>
+                          
+                          {/* Generate Step */}
+                          <div className="flex items-center">
+                            <button 
+                              onClick={() => {
+                                alert("🔐 Please login first to generate stories!");
+                              }}
+                              className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold text-sm sm:text-base shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+                            >
+                              Generate
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -85,59 +139,6 @@ const Portfolio = ({ onGetStarted }) => {
           </div>
         </div>
 
-        {/* Demo Flow Section - Outside Demo Container */}
-        <div className="mb-16 max-w-7xl mx-auto px-6">
-          <div className="text-center mb-8">
-            <h5 className="text-lg sm:text-xl font-semibold text-gray-700 mb-6">Demo Flow:</h5>
-          </div>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
-            {/* Upload Step */}
-            <div className="flex items-center">
-              <button 
-                onClick={() => {
-                  alert("🔐 Please login first to upload your videos!");
-                }}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer"
-              >
-                Upload
-              </button>
-              <div className="hidden sm:block ml-6">
-                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            </div>
-            
-            {/* Search Step */}
-            <div className="flex items-center">
-              <button 
-                onClick={() => {
-                  alert("🔐 Please login first to search your memories!");
-                }}
-                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer"
-              >
-                Search
-              </button>
-              <div className="hidden sm:block ml-6">
-                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            </div>
-            
-            {/* Generate Step */}
-            <div className="flex items-center">
-              <button 
-                onClick={() => {
-                  alert("🔐 Please login first to generate stories!");
-                }}
-                className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer"
-              >
-                Generate
-              </button>
-            </div>
-          </div>
-        </div>
 
         {/* Enhanced Social Proof / Trust Section */}
         <div className="text-center mb-16">
