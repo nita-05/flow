@@ -82,6 +82,45 @@ const Portfolio = ({ onGetStarted }) => {
               </div>
             </div>
 
+            {/* Demo Flow Section */}
+            <div className="mt-8">
+              <div className="text-center mb-6">
+                <h5 className="text-sm sm:text-base font-semibold text-gray-600 mb-4">Demo Flow:</h5>
+              </div>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
+                {/* Upload Step */}
+                <div className="flex items-center">
+                  <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold text-sm sm:text-base shadow-lg">
+                    Upload
+                  </div>
+                  <div className="hidden sm:block ml-4">
+                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+                
+                {/* Search Step */}
+                <div className="flex items-center">
+                  <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold text-sm sm:text-base shadow-lg">
+                    Search
+                  </div>
+                  <div className="hidden sm:block ml-4">
+                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+                
+                {/* Generate Step */}
+                <div className="flex items-center">
+                  <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold text-sm sm:text-base shadow-lg">
+                    Generate
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
