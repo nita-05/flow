@@ -79,6 +79,7 @@ function App() {
       
       if (finalJwt) {
         console.log('✅ JWT token received from OAuth:', finalJwt.substring(0, 20) + '...');
+        console.log('✅ Full JWT token:', finalJwt);
         // Set token in authService singleton
         authService.setToken(finalJwt);
         console.log('✅ Token set in authService singleton');
