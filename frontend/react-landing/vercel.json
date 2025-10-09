@@ -1,25 +1,11 @@
 {
-  "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "build"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/api/(.*)",
+      "destination": "https://memorify-backend-ik4b.onrender.com/api/$1"
     }
   ],
   "env": {
-    "REACT_APP_API_URL": "https://your-render-app.onrender.com"
+    "REACT_APP_API_URL": "https://memorify-backend-ik4b.onrender.com/api"
   }
 }

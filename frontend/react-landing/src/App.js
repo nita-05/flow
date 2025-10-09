@@ -32,15 +32,29 @@ function App() {
   useEffect(() => {
     // Capture JWT from OAuth redirect and store
     try {
+      console.log('🔍 Full URL:', window.location.href);
+      console.log('🔍 Pathname:', window.location.pathname);
+      console.log('🔍 Search:', window.location.search);
+      console.log('🔍 Hash:', window.location.hash);
+      
+      // Try multiple ways to get JWT
       const params = new URLSearchParams(window.location.search);
       const jwt = params.get('jwt');
-      console.log('🔍 Checking for JWT in URL:', window.location.href);
-      console.log('🔍 JWT found:', jwt ? 'Yes' : 'No');
       
-      if (jwt) {
-        console.log('✅ JWT token received from OAuth:', jwt.substring(0, 20) + '...');
+      // Also check hash for JWT (in case it's there)
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const jwtFromHash = hashParams.get('jwt');
+      
+      const finalJwt = jwt || jwtFromHash;
+      
+      console.log('🔍 JWT from search params:', jwt ? 'Yes' : 'No');
+      console.log('🔍 JWT from hash:', jwtFromHash ? 'Yes' : 'No');
+      console.log('🔍 Final JWT found:', finalJwt ? 'Yes' : 'No');
+      
+      if (finalJwt) {
+        console.log('✅ JWT token received from OAuth:', finalJwt.substring(0, 20) + '...');
         // Set token in authService singleton
-        authService.setToken(jwt);
+        authService.setToken(finalJwt);
         console.log('✅ Token set in authService singleton');
         console.log('✅ Current token in authService:', authService.getToken() ? 'Present' : 'Missing');
         // Clear the URL parameters and navigate to dashboard
