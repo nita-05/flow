@@ -202,7 +202,7 @@ curl -X GET http://localhost:5000/api/auth/me \
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `MONGODB_URI` | MongoDB connection string | `mongodb://localhost:27017/bestofus` |
+| `MONGODB_URI` | MongoDB connection string | `mongodb://localhost:27017/memorify` |
 | `JWT_SECRET` | Secret key for JWT signing | Required |
 | `PORT` | Server port | `5000` |
 | `NODE_ENV` | Environment mode | `development` |

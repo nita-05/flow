@@ -18,7 +18,8 @@ const requiredEnvVars = [
 const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
 if (missingVars.length > 0) {
   console.error('❌ Missing required environment variables:', missingVars.join(', '));
-  console.error('💡 Run: node setup-env.js to create .env file with required variables');
+  console.error('💡 Please set these environment variables in your deployment platform');
+  console.error('💡 Required variables:', requiredEnvVars.join(', '));
   process.exit(1);
 }
 
@@ -52,7 +53,10 @@ const corsOptions = {
       'https://flow-git-main-nita-barikis-projects.vercel.app', // Git branch domain
       'https://flow-jz5x64n7r-nita-barikis-projects.vercel.app', // Previous Vercel URL
       'https://flow-qahqmc61w-nita-barikis-projects.vercel.app', // Previous Vercel URL
-      'https://flow-mnifvdz3z-nita-barikis-projects.vercel.app'  // Another Vercel URL
+      'https://flow-mnifvdz3z-nita-barikis-projects.vercel.app',  // Another Vercel URL
+      // Add your production domain here
+      'https://yourdomain.com',
+      'https://www.yourdomain.com'
     ].filter(Boolean);
     
     if (allowedOrigins.includes(origin)) {
@@ -100,7 +104,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/bestofus',
+    mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/memorify',
     touchAfter: 24 * 3600 // lazy session update
   }),
   cookie: {
@@ -122,7 +126,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/uploads/audio', express.static('uploads/audio'));
 
 // Database connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/bestofus', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/memorify', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
