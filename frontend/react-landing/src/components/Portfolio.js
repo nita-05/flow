@@ -76,16 +76,6 @@ const Portfolio = ({ onGetStarted }) => {
                         <h4 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2 text-center">Watch Memorify in Action</h4>
                         <p className="text-sm sm:text-base text-gray-600 text-center px-2">Experience the power of AI-driven video search and story generation</p>
                       </div>
-                      <div className="bg-gradient-to-br from-purple-100/90 via-blue-100/80 to-indigo-100/90 rounded-xl p-3 sm:p-4 shadow-sm border border-purple-300/50 text-center">
-                        <div className="text-xs sm:text-sm text-gray-500 mb-2 text-center">Demo Flow:</div>
-                        <div className="flex items-center justify-center space-x-2 sm:space-x-4 text-xs sm:text-sm font-medium text-gray-700 flex-wrap">
-                          <span className="bg-purple-100 px-2 sm:px-3 py-1 rounded-full">Upload</span>
-                          <span className="text-gray-400">→</span>
-                          <span className="bg-blue-100 px-2 sm:px-3 py-1 rounded-full">Search</span>
-                          <span className="text-gray-400">→</span>
-                          <span className="bg-green-100 px-2 sm:px-3 py-1 rounded-full">Generate</span>
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>
