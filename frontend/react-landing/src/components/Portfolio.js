@@ -66,12 +66,17 @@ const Portfolio = ({ onGetStarted }) => {
                   {/* Demo Content */}
                   <div className="p-4 sm:p-8 bg-gradient-to-br from-purple-50 to-blue-50">
                     <div className="text-center space-y-6 sm:space-y-8">
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-purple-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                      <button 
+                        onClick={() => {
+                          alert("🔐 Please login first to watch the demo video!");
+                        }}
+                        className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-purple-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 cursor-pointer"
+                      >
                         <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
                           <rect x="4" y="6" width="10" height="9" rx="2" />
                           <path d="M16 8l5 2.8L16 13.6V8z" />
                         </svg>
-                      </div>
+                      </button>
                       <div className="text-center">
                         <h4 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2 text-center">Watch Memorify in Action</h4>
                         <p className="text-sm sm:text-base text-gray-600 text-center px-2">Experience the power of AI-driven video search and story generation</p>
