@@ -104,11 +104,25 @@ const Dashboard = () => {
             return;
           }
           
+          console.log('No authentication found, checking localStorage...');
+          // Check localStorage directly as fallback
+          const localToken = localStorage.getItem('token');
+          const localUser = localStorage.getItem('user');
           
-          console.log('No authentication found, redirecting to home');
-          setIsLoading(false);
-          window.history.pushState({}, '', '/');
-          window.location.reload();
+          if (localToken && localUser) {
+            console.log('Found token and user in localStorage, using them');
+            setUser(JSON.parse(localUser));
+            await loadUserData();
+            setIsLoading(false);
+          } else {
+            console.log('No authentication found, but staying on dashboard to prevent redirect loop');
+            console.log('Current URL:', window.location.href);
+            console.log('localStorage token:', localStorage.getItem('token'));
+            console.log('localStorage user:', localStorage.getItem('user'));
+            setIsLoading(false);
+            // Don't redirect - let the user stay on dashboard
+            // The App.js route checking will handle navigation
+          }
         }
       }
     };
@@ -152,6 +166,15 @@ const Dashboard = () => {
       setIsProcessing(true);
       console.log('Starting Google Photos import...');
       
+      // Check if user has a valid token
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.log('No token found, redirecting to login');
+        alert('Please log in first to use Google Photos import');
+        setIsProcessing(false);
+        return;
+      }
+      
       // Check if Google Photos is already connected
       const connectionStatus = await googlePhotosService.getConnectionStatus();
       
@@ -169,6 +192,18 @@ const Dashboard = () => {
       alert(`Google Photos import failed: ${err.message || 'Unknown error'}. Please try using "Choose Files" to upload your photos instead.`);
     } finally {
       setIsProcessing(false);
+    }
+  };
+
+  const handleGooglePhotosDisconnect = async () => {
+    try {
+      console.log('Disconnecting Google Photos...');
+      await googlePhotosService.disconnect();
+      alert('Google Photos disconnected successfully! You can now reconnect with fresh permissions.');
+      console.log('Google Photos disconnected');
+    } catch (error) {
+      console.error('Error disconnecting Google Photos:', error);
+      alert('Failed to disconnect Google Photos. Please try again.');
     }
   };
 
@@ -249,12 +284,59 @@ const Dashboard = () => {
     }
   };
 
-  // Load media when modal opens
+  // Load media when modal opens (only if connected)
   useEffect(() => {
     if (showGooglePhotosModal) {
-      loadGooglePhotosMedia();
+      // Check connection status first before loading
+      const checkAndLoad = async () => {
+        try {
+          // Try multiple times with delay to ensure database is updated
+          let retries = 3;
+          let connectionStatus = null;
+          
+          while (retries > 0) {
+            connectionStatus = await googlePhotosService.getConnectionStatus();
+            if (connectionStatus.connected) {
+              break;
+            }
+            retries--;
+            if (retries > 0) {
+              console.log('Connection not ready, retrying...', retries);
+              await new Promise(resolve => setTimeout(resolve, 500));
+            }
+          }
+          
+          if (connectionStatus && connectionStatus.connected) {
+            loadGooglePhotosMedia();
+          } else {
+            setShowGooglePhotosModal(false);
+            alert('Google Photos connection not ready yet. Please try again in a moment.');
+          }
+        } catch (error) {
+          console.error('Error checking connection status:', error);
+          setShowGooglePhotosModal(false);
+          alert('Failed to check Google Photos connection. Please try again.');
+        }
+      };
+      checkAndLoad();
     }
   }, [showGooglePhotosModal]);
+
+  // Check for Google Photos connection success
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const googlePhotosConnected = params.get('google-photos-connected');
+    
+    if (googlePhotosConnected === 'true') {
+      console.log('Google Photos connected successfully, opening import modal');
+      // Clear the URL parameter
+      window.history.replaceState({}, '', '/dashboard');
+      // Wait a moment for the database to update, then open the modal
+      setTimeout(() => {
+        setShowGooglePhotosModal(true);
+      }, 1000);
+    }
+  }, []);
 
   const handleMediaClick = (file) => {
     console.log('🎯 MEDIA CLICKED:', file);
@@ -989,19 +1071,6 @@ const Dashboard = () => {
                 <label htmlFor="file-upload" className="btn-primary cursor-pointer">
                   Choose Files
                 </label>
-                <div className="mt-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      console.log('Google Photos button clicked');
-                      handleGooglePhotosImport();
-                    }}
-                    className="btn-outline"
-                    disabled={isProcessing}
-                  >
-                    {isProcessing ? 'Importing...' : 'Import from Google Photos'}
-                  </button>
-                </div>
               </div>
             </div>
 
